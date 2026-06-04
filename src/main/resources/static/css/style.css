@@ -1,18 +1,19 @@
-/* --- GLOBAL VARIABLES --- */
+/* --- GLOBAL VARIABLES (Light/Cream Theme) --- */
 :root {
-    --bg-dark-base: #121212;
-    --bg-panel-dark: #1E1E1E;
-    --accent-color: #bb86fc;
-    --text-primary: #e0e0e0;
-    --text-secondary: #a0a0a0;
-    --border-color: #333333;
+    --bg-main: #f4f0ea;       /* Warm cream background */
+    --bg-panel: #ffffff;      /* Pure white for floating cards */
+    --accent-color: #204035;  /* Deep forest green for buttons/focus */
+    --accent-hover: #2e5c4c;  /* Lighter green for hover effects */
+    --text-primary: #1a1a1a;  /* Near black for high readability */
+    --text-secondary: #666666;/* Muted gray for labels */
+    --border-color: #e5e5e5;  /* Soft structural borders */
 }
 
 /* --- BASE STYLES --- */
 body {
     margin: 0;
     padding: 0;
-    background-color: var(--bg-dark-base);
+    background-color: var(--bg-main);
     color: var(--text-primary);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
@@ -23,13 +24,12 @@ body {
 
 /* --- LOGIN MODAL (Floating Card) --- */
 .login-card {
-    background-color: var(--bg-panel-dark);
+    background-color: var(--bg-panel);
     padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); /* Softer, diffuse shadow */
     width: 100%;
     max-width: 400px;
-    border: 1px solid var(--border-color);
 }
 
 .login-card h2 {
@@ -49,21 +49,24 @@ body {
     margin-bottom: 8px;
     color: var(--text-secondary);
     font-size: 0.9rem;
+    font-weight: 500;
 }
 
 .form-group input[type="text"],
 .form-group input[type="password"] {
-    background-color: var(--bg-dark-base);
+    background-color: #f9f9f9;
     border: 1px solid var(--border-color);
     color: var(--text-primary);
     padding: 12px;
-    border-radius: 6px;
+    border-radius: 8px;
     outline: none;
-    transition: border-color 0.3s;
+    transition: all 0.3s ease;
 }
 
 .form-group input:focus {
     border-color: var(--accent-color);
+    background-color: var(--bg-panel);
+    box-shadow: 0 0 0 3px rgba(32, 64, 53, 0.1); /* Subtle green focus ring */
 }
 
 /* --- ROLE TOGGLE (Radio Buttons) --- */
@@ -72,8 +75,8 @@ body {
     justify-content: space-around;
     margin-bottom: 25px;
     padding: 10px;
-    background-color: var(--bg-dark-base);
-    border-radius: 6px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
     border: 1px solid var(--border-color);
 }
 
@@ -81,21 +84,23 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
+    color: var(--text-primary);
 }
 
 /* --- SUBMIT BUTTON --- */
 .btn-primary {
     background-color: var(--accent-color);
-    color: #000;
+    color: #ffffff;
     border: none;
     padding: 14px;
-    border-radius: 6px;
+    border-radius: 8px;
     width: 100%;
-    font-weight: bold;
+    font-weight: 600;
+    font-size: 1rem;
     cursor: pointer;
-    transition: opacity 0.3s;
+    transition: background-color 0.3s ease;
 }
 
 .btn-primary:hover {
-    opacity: 0.8;
+    background-color: var(--accent-hover);
 }
