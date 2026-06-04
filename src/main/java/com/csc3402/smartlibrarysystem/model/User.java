@@ -1,6 +1,11 @@
 package com.csc3402.smartlibrarysystem.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
+@Entity
 public class User {
+    @Id
     private String user_id;
     private String username;
     private String password;

@@ -1,0 +1,101 @@
+/* --- GLOBAL VARIABLES --- */
+:root {
+    --bg-dark-base: #121212;
+    --bg-panel-dark: #1E1E1E;
+    --accent-color: #bb86fc;
+    --text-primary: #e0e0e0;
+    --text-secondary: #a0a0a0;
+    --border-color: #333333;
+}
+
+/* --- BASE STYLES --- */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-dark-base);
+    color: var(--text-primary);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* --- LOGIN MODAL (Floating Card) --- */
+.login-card {
+    background-color: var(--bg-panel-dark);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid var(--border-color);
+}
+
+.login-card h2 {
+    margin-top: 0;
+    text-align: center;
+    color: var(--text-primary);
+}
+
+/* --- FORM ELEMENTS --- */
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"] {
+    background-color: var(--bg-dark-base);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 12px;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    border-color: var(--accent-color);
+}
+
+/* --- ROLE TOGGLE (Radio Buttons) --- */
+.role-toggle {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 25px;
+    padding: 10px;
+    background-color: var(--bg-dark-base);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+.radio-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* --- SUBMIT BUTTON --- */
+.btn-primary {
+    background-color: var(--accent-color);
+    color: #000;
+    border: none;
+    padding: 14px;
+    border-radius: 6px;
+    width: 100%;
+    font-weight: bold;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.btn-primary:hover {
+    opacity: 0.8;
+}

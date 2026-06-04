@@ -1,0 +1,30 @@
+package com.csc3402.smartlibrarysystem.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeHttpRequests(auth -> auth
+                        // 1. Tell the bouncer to always allow your CSS to load!
+                        .requestMatchers("/css/**").permitAll()
+                        // 2. Require authentication for everything else
+                        .anyRequest().authenticated()
+                )
+                .formLogin(form -> form
+                        // 3. Tell the bouncer exactly which custom URL to use for logging in
+                        .loginPage("/login")
+                        .permitAll()
+                );
+
+        return http.build();
+    }
+}
