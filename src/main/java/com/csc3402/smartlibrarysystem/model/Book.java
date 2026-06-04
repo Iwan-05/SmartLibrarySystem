@@ -1,16 +1,27 @@
 package com.csc3402.smartlibrarysystem.model;
 
+import jakarta.persistence.*;
+
+@Entity
 public class Book {
-    private String book_id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="book_id")
+    private Long book_id;
+    @Column(name="title")
     private String title;
+    @Column(name="author")
     private String author;
+    @Column(name="status")
     private String status;
+    @Column(name="avg_rating")
     private double avg_rating;
 
     public Book() {
     }
 
-    public Book(String book_id, String title, String author, String status, double avg_rating) {
+    public Book(Long book_id, String title, String author, String status, double avg_rating) {
         this.book_id = book_id;
         this.title = title;
         this.author = author;
@@ -18,11 +29,11 @@ public class Book {
         this.avg_rating = avg_rating;
     }
 
-    public String getBook_id() {
+    public Long getBook_id() {
         return book_id;
     }
 
-    public void setBook_id(String book_id) {
+    public void setBook_id(Long book_id) {
         this.book_id = book_id;
     }
 

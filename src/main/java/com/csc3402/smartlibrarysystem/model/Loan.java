@@ -1,19 +1,32 @@
 package com.csc3402.smartlibrarysystem.model;
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
+@Entity
 public class Loan {
-    private String loan_id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="loan_id")
+    private Long loan_id;
+    @Column(name="user_id")
     private String user_id;
+    @Column(name="book_id")
     private String book_id;
+    @Column(name="borrow_date")
     private LocalDateTime borrow_date;
+    @Column(name="due_date")
     private LocalDateTime due_date;
+    @Column(name="return_date")
     private LocalDateTime return_date;
+    @Column(name="fine_amount")
     private double fine_amount;
 
     public Loan() {
     }
 
-    public Loan(String loan_id, String user_id, String book_id, LocalDateTime borrow_date, LocalDateTime due_date, LocalDateTime return_date, double fine_amount) {
+    public Loan(Long loan_id, String user_id, String book_id, LocalDateTime borrow_date, LocalDateTime due_date, LocalDateTime return_date, double fine_amount) {
         this.loan_id = loan_id;
         this.user_id = user_id;
         this.book_id = book_id;
@@ -23,11 +36,11 @@ public class Loan {
         this.fine_amount = fine_amount;
     }
 
-    public String getLoan_id() {
+    public Long getLoan_id() {
         return loan_id;
     }
 
-    public void setLoan_id(String loan_id) {
+    public void setLoan_id(Long loan_id) {
         this.loan_id = loan_id;
     }
 
