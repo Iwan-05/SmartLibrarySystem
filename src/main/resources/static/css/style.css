@@ -254,3 +254,167 @@ body {
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); /* Deep 3D shadow */
     object-fit: cover;
 }
+
+/* --- CATEGORY FILTERS --- */
+.category-filters {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+    /* Allows scrolling if there are too many categories */
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+.filter-pill {
+    padding: 10px 24px;
+    border-radius: 30px;
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.filter-pill:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+/* The actively selected category */
+.filter-pill.active {
+    background-color: var(--accent-color);
+    color: #ffffff;
+    border-color: var(--accent-color);
+    box-shadow: 0 4px 10px rgba(32, 64, 53, 0.2);
+}
+
+/* =========================================
+   --- MY LIBRARY ---
+   ========================================= */
+
+.due-date {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border-color);
+}
+
+/* Red for urgency if the book is due soon or overdue */
+.due-date.urgent {
+    color: #c5221f;
+}
+
+/* Green if they have plenty of time left */
+.due-date.safe {
+    color: var(--accent-color);
+}
+
+.btn-return {
+    margin-top: 15px;
+    width: 100%;
+    padding: 10px;
+    background-color: transparent;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-return:hover {
+    border-color: var(--accent-color);
+    background-color: rgba(32, 64, 53, 0.05); /* Soft green background on hover */
+    color: var(--accent-color);
+}
+
+/* =========================================
+   --- PROFILE VIEW SPECIFICS ---
+   ========================================= */
+.profile-container {
+    max-width: 900px;
+    margin: 0 auto; /* Centers the profile content in the workspace */
+}
+
+.profile-header-card {
+    background-color: var(--bg-panel);
+    border-radius: 16px;
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+    margin-bottom: 30px;
+}
+
+.avatar-large {
+    width: 120px;
+    height: 120px;
+    background-color: var(--accent-color);
+    border-radius: 50%;
+    background-image: url('https://api.dicebear.com/7.x/avataaars/svg?seed=Davis');
+    background-size: cover;
+}
+
+.profile-details h2 {
+    margin: 0 0 8px 0;
+    font-size: 2rem;
+    color: var(--text-primary);
+}
+
+.profile-details p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+.role-badge {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 6px 16px;
+    background-color: rgba(32, 64, 53, 0.1);
+    color: var(--accent-color);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+}
+
+.stat-card {
+    background-color: var(--bg-panel);
+    padding: 30px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+}
+
+.stat-card h4 {
+    margin: 0 0 15px 0;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.stat-value.penalty {
+    color: #c5221f; /* Red for emphasis on fines */
+}

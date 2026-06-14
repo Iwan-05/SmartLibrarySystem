@@ -18,6 +18,12 @@ public class SecurityConfig {
                         .requestMatchers("/css/**").permitAll()
                         // 2. TEMPORARILY allow the dashboard for UI testing
                         .requestMatchers("/dashboard").permitAll()
+                        // 2. TEMPORARILY allow the mylibrary for UI testing
+                        .requestMatchers("/mylibrary").permitAll()
+                        // 2. TEMPORARILY allow the category for UI testing
+                        .requestMatchers("/category").permitAll()
+                        // 2. TEMPORARILY allow the profile for UI testing
+                        .requestMatchers("/profile").permitAll()
                         // 3. Require authentication for everything else
                         .anyRequest().authenticated()
                 )
