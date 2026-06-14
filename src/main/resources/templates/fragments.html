@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<!-- Reusable Thymeleaf fragments: head, header, footer -->
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <th:block th:fragment="head(title)">
+      <title th:text="${title}">App</title>
+      <link rel="stylesheet" th:href="@{/css/admin.css}" />
+    </th:block>
+  </head>
+
+  <body>
+    <th:block th:fragment="header">
+      <header class="site-header">
+        <nav>
+          <a th:href="@{/}">Home</a> |
+          <a th:href="@{/admin}">Admin</a>
+        </nav>
+      </header>
+    </th:block>
+
+    <th:block th:fragment="footer">
+      <footer class="site-footer">
+        <p>&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2026</span> SmartLibrarySystem</p>
+      </footer>
+    </th:block>
+  </body>
+</html>

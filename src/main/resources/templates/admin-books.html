@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Books</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<div class="dashboard-wrapper admin-shell">
+    <div th:replace="admin-sidebar :: sidebar('books')"></div>
+
+    <main class="main-workspace admin-workspace">
+        <header class="top-header admin-header">
+            <div class="header-left">
+                <h1>Books</h1>
+                <p class="header-subtitle">Catalog management and inventory control.</p>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Admin</strong>
+                <div class="avatar admin-avatar"></div>
+            </div>
+        </header>
+
+        <section class="panel-grid">
+            <article class="admin-panel panel-wide">
+                <div class="panel-header">
+                    <div>
+                        <span class="panel-kicker">Catalog</span>
+                        <h2>Books page</h2>
+                    </div>
+                    <a th:href="@{/book/list}" class="panel-action">View book list</a>
+                </div>
+
+                <p class="page-copy">Use this page to add, update, or review books in the library catalog.</p>
+            </article>
+        </section>
+    </main>
+</div>
+</body>
+</html>

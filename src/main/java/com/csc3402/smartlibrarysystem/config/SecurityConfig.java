@@ -24,6 +24,8 @@ public class SecurityConfig {
                         .requestMatchers("/category").permitAll()
                         // 2. TEMPORARILY allow the profile for UI testing
                         .requestMatchers("/profile").permitAll()
+                        // 2. TEMPORARILY allow the admin pages for UI testing
+                        .requestMatchers("/admin", "/admin/**").permitAll()
                         // 3. Require authentication for everything else
                         .anyRequest().authenticated()
                 )

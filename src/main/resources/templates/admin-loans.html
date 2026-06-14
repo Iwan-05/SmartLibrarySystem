@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Loans</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<div class="dashboard-wrapper admin-shell">
+    <div th:replace="admin-sidebar :: sidebar('loans')"></div>
+
+    <main class="main-workspace admin-workspace">
+        <header class="top-header admin-header">
+            <div class="header-left">
+                <h1>Loans</h1>
+                <p class="header-subtitle">Track active, overdue, and returned loans.</p>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search loans...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Admin</strong>
+                <div class="avatar admin-avatar"></div>
+            </div>
+        </header>
+
+        <section class="panel-grid">
+            <article class="admin-panel panel-wide">
+                <div class="panel-header">
+                    <div>
+                        <span class="panel-kicker">Loans</span>
+                        <h2>Loans page</h2>
+                    </div>
+                    <a th:href="@{/mylibrary}" class="panel-action">View public loan flow</a>
+                </div>
+
+                <p class="page-copy">Review due dates, mark returns, and manage current borrow records.</p>
+            </article>
+        </section>
+    </main>
+</div>
+</body>
+</html>
