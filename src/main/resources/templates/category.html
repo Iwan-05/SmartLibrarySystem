@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - Categories</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link active">Category</a>
+            <a th:href="@{/mylibrary}" class="nav-link">
+                My Library
+                <span class="nav-hint">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>Categories</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search within categories...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <div class="category-filters">
+            <button class="filter-pill active">All Books</button>
+            <button class="filter-pill">Business & Finance</button>
+            <button class="filter-pill">Design & UI/UX</button>
+            <button class="filter-pill">Computer Science</button>
+            <button class="filter-pill">Fiction</button>
+            <button class="filter-pill">Self-Improvement</button>
+        </div>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="book : ${books}">
+                    <img th:src="${book.cover_url}" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${book.title}">Book Title Placeholder</h3>
+                        <p class="book-author" th:text="${book.author}">Author Name</p>
+
+                        <div class="book-meta">
+                            <span class="rating-badge" th:text="'★ ' + ${book.avg_rating}">★ 0.0</span>
+                            <span class="status-tag"
+                                  th:classappend="${book.status == 'Available' ? 'available' : 'borrowed'}"
+                                  th:text="${book.status}">
+                                    Status
+                                </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - Profile</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+            <a th:href="@{/mylibrary}" class="nav-link">
+                My Library
+                <span class="nav-hint">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link active">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Profile</h1>
+            </div>
+            <div class="header-center"></div> <div class="user-profile">
+            <strong>Davis Workman</strong>
+            <div class="avatar"></div>
+        </div>
+        </header>
+
+        <div class="profile-container">
+
+            <div class="profile-header-card">
+                <div class="avatar-large"></div>
+                <div class="profile-details">
+                    <h2 th:text="${user != null ? user.username : 'Davis Workman'}">Davis Workman</h2>
+                    <p>Faculty of Computer Science and Information Technology</p>
+                    <span class="role-badge" th:text="${user != null ? user.role : 'Student'}">Student</span>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <h4>Active Loans</h4>
+                    <div class="stat-value">3</div>
+                </div>
+
+                <div class="stat-card">
+                    <h4>Books Read</h4>
+                    <div class="stat-value">12</div>
+                </div>
+
+                <div class="stat-card">
+                    <h4>Outstanding Fines</h4>
+                    <div class="stat-value penalty" th:text="${user != null ? 'RM ' + user.fine : 'RM 0.00'}">RM 0.00</div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+</div>
+
+</body>
+</html>
