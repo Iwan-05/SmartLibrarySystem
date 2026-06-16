@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{admin.title}">Admin Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<div class="dashboard-wrapper admin-shell">
+    <div th:replace="admin-sidebar :: sidebar(${activeSection})"></div>
+
+    <main class="main-workspace admin-workspace">
+        <header class="top-header admin-header">
+            <div class="header-left">
+                <h1 th:text="#{admin.title}">Admin Dashboard</h1>
+                <p class="header-subtitle">Manage the library from one place.</p>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search books, loans, members...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Admin</strong>
+                <div class="avatar admin-avatar"></div>
+            </div>
+        </header>
+
+        <section id="overview" class="summary-grid">
+            <article class="summary-card accent">
+                <span class="summary-label">Books</span>
+                <strong class="summary-value">128</strong>
+                <span class="summary-meta">14 added this week</span>
+            </article>
+            <article class="summary-card">
+                <span class="summary-label">Loans</span>
+                <strong class="summary-value">42</strong>
+                <span class="summary-meta">9 due today</span>
+            </article>
+            <article class="summary-card">
+                <span class="summary-label">Members</span>
+                <strong class="summary-value">367</strong>
+                <span class="summary-meta">23 pending approval</span>
+            </article>
+            <article class="summary-card">
+                <span class="summary-label">Ratings</span>
+                <strong class="summary-value">4.8</strong>
+                <span class="summary-meta">Average across catalog</span>
+            </article>
+        </section>
+
+        <section class="panel-grid">
+            <article id="books" class="admin-panel panel-wide">
+                <div class="panel-header">
+                    <div>
+                        <span class="panel-kicker">Catalog</span>
+                        <h2>Recent books</h2>
+                    </div>
+                    <a th:href="@{/admin/books}" class="panel-action">Open books page</a>
+                </div>
+
+                <div class="table-shell">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Status</th>
+                                <th>Rating</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>The Pragmatic Programmer</td>
+                                <td>Andrew Hunt</td>
+                                <td><span class="status-pill available">Available</span></td>
+                                <td>4.9</td>
+                            </tr>
+                            <tr>
+                                <td>Clean Architecture</td>
+                                <td>Robert C. Martin</td>
+                                <td><span class="status-pill borrowed">Borrowed</span></td>
+                                <td>4.8</td>
+                            </tr>
+                            <tr>
+                                <td>Designing Data-Intensive Applications</td>
+                                <td>Martin Kleppmann</td>
+                                <td><span class="status-pill available">Available</span></td>
+                                <td>4.9</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+            <article id="loans" class="admin-panel">
+                <div class="panel-header">
+                    <div>
+                        <span class="panel-kicker">Loans</span>
+                        <h2>Due today</h2>
+                    </div>
+                </div>
+
+                <ul class="detail-list">
+                    <li>
+                        <span class="detail-title">How to Build a Habit</span>
+                        <span class="detail-meta urgent">Due in 4 hours</span>
+                    </li>
+                    <li>
+                        <span class="detail-title">Refactoring UI</span>
+                        <span class="detail-meta safe">Due tomorrow</span>
+                    </li>
+                    <li>
+                        <span class="detail-title">Domain-Driven Design</span>
+                        <span class="detail-meta safe">Due in 3 days</span>
+                    </li>
+                </ul>
+            </article>
+
+            <article id="members" class="admin-panel">
+                <div class="panel-header">
+                    <div>
+                        <span class="panel-kicker">Members</span>
+                        <h2>Recent activity</h2>
+                    </div>
+                </div>
+
+                <div class="activity-stack">
+                    <div class="activity-item">
+                        <div>
+                            <strong>Aisyah Rahman</strong>
+                            <p>Requested access to the science category.</p>
+                        </div>
+                        <span class="status-pill available">New</span>
+                    </div>
+                    <div class="activity-item">
+                        <div>
+                            <strong>Daniel Tan</strong>
+                            <p>Returned a borrowed copy of Clean Code.</p>
+                        </div>
+                        <span class="status-pill borrowed">2h ago</span>
+                    </div>
+                </div>
+            </article>
+
+<!--            <article id="settings" class="admin-panel">
+                <div class="panel-header">
+                    <div>
+                        <span class="panel-kicker">Quick actions</span>
+                        <h2>Settings</h2>
+                    </div>
+                </div>
+
+                <div class="action-stack">
+                    <a th:href="@{/admin/books}" class="action-button">Create book entry</a>
+                    <a th:href="@{/admin/settings}" class="action-button secondary">Export report</a>
+                    <a th:href="@{/profile}" class="action-button secondary">Manage roles</a>
+                </div>
+            </article>-->
+        </section>
+    </main>
+</div>
+</body>
+</html>

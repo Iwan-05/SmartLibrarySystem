@@ -1,0 +1,2113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html><!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Library System - My Library</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display: block;">
+
+<div class="dashboard-wrapper">
+
+    <aside class="sidebar">
+        <div class="brand-logo">THE BOOKS</div>
+
+        <nav class="nav-menu">
+            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+            <a th:href="@{/category}" class="nav-link">Category</a>
+
+            <a th:href="@{/mylibrary}" class="nav-link active">
+                My Library
+                <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
+            </a>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <a th:href="@{/profile}" class="nav-link">Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-workspace">
+
+        <header class="top-header">
+            <div class="header-left">
+                <h1>My Library</h1>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search your borrowed books...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Davis Workman</strong>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <section>
+            <div class="book-shelf">
+
+                <div class="book-card" th:each="loan : ${loans}">
+                    <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
+
+                    <div class="book-info">
+                        <h3 class="book-title" th:text="${loan.book.title}">Book Title</h3>
+                        <p class="book-author" th:text="${loan.book.author}">Author Name</p>
+
+                        <div class="due-date safe">
+                            ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
+                        </div>
+
+                        <form th:action="@{/returnBook}" method="post">
+                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <button type="submit" class="btn-return">Return Book</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="book-card">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600" alt="Book Cover" class="book-cover">
+                    <div class="book-info">
+                        <h3 class="book-title">How Innovation Works</h3>
+                        <p class="book-author">Matt Ridley</p>
+                        <div class="due-date urgent">
+                            ⏳ Due: Tomorrow
+                        </div>
+                        <button class="btn-return">Return Book</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
+</html>

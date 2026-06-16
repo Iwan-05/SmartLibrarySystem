@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Settings</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<div class="dashboard-wrapper admin-shell">
+    <div th:replace="admin-sidebar :: sidebar('settings')"></div>
+
+    <main class="main-workspace admin-workspace">
+        <header class="top-header admin-header">
+            <div class="header-left">
+                <h1>Settings</h1>
+                <p class="header-subtitle">Configure the admin dashboard and access rules.</p>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search settings...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Admin</strong>
+                <div class="avatar admin-avatar"></div>
+            </div>
+        </header>
+
+        <section class="panel-grid">
+            <article class="admin-panel panel-wide">
+                <div class="panel-header">
+                    <div>
+                        <span class="panel-kicker">Quick actions</span>
+                        <h2>Settings page</h2>
+                    </div>
+                </div>
+
+                <div class="action-stack">
+                    <a th:href="@{/admin/books}" class="action-button">Go to books</a>
+                    <a th:href="@{/admin/loans}" class="action-button secondary">Go to loans</a>
+                    <a th:href="@{/admin/members}" class="action-button secondary">Go to members</a>
+                </div>
+            </article>
+        </section>
+    </main>
+</div>
+</body>
+</html>

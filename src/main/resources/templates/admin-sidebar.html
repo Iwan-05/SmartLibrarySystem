@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <aside th:fragment="sidebar(activeSection)" class="sidebar admin-sidebar">
+        <div class="brand-logo">
+            <span class="brand-kicker">CONTROL</span>
+            <span class="brand-name">The Books Admin</span>
+        </div>
+
+        <nav class="nav-menu admin-nav" aria-label="Admin sections">
+            <a th:href="@{/admin}" class="nav-link" th:classappend="${activeSection == 'overview'} ? ' active' : ''">
+                Overview
+                <span class="nav-hint">Snapshot and alerts</span>
+            </a>
+            <a th:href="@{/admin/books}" class="nav-link" th:classappend="${activeSection == 'books'} ? ' active' : ''">
+                Books
+                <span class="nav-hint">Catalog and inventory</span>
+            </a>
+            <a th:href="@{/admin/loans}" class="nav-link" th:classappend="${activeSection == 'loans'} ? ' active' : ''">
+                Loans
+                <span class="nav-hint">Borrowed items</span>
+            </a>
+            <a th:href="@{/admin/members}" class="nav-link" th:classappend="${activeSection == 'members'} ? ' active' : ''">
+                Members
+                <span class="nav-hint">Users and roles</span>
+            </a>
+<!--            <a th:href="@{/admin/settings}" class="nav-link" th:classappend="${activeSection == 'settings'} ? ' active' : ''">
+                Settings
+                <span class="nav-hint">Theme and access</span>
+            </a>-->
+
+            <div class="sidebar-footer">
+                <a th:href="@{/dashboard}" class="nav-link">Public Dashboard</a>
+                <a th:href="@{/profile}" class="nav-link">Admin Profile</a>
+                <a th:href="@{/login}" class="nav-link">Log out</a>
+            </div>
+        </nav>
+    </aside>
+</body>
+</html>

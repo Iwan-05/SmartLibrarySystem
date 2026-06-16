@@ -14,13 +14,22 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        // 1. Tell the bouncer to always allow your CSS to load!
+                        // 1. Allow CSS to load
                         .requestMatchers("/css/**").permitAll()
-                        // 2. Require authentication for everything else
+                        // 2. TEMPORARILY allow the dashboard for UI testing
+                        .requestMatchers("/dashboard").permitAll()
+                        // 2. TEMPORARILY allow the mylibrary for UI testing
+                        .requestMatchers("/mylibrary").permitAll()
+                        // 2. TEMPORARILY allow the category for UI testing
+                        .requestMatchers("/category").permitAll()
+                        // 2. TEMPORARILY allow the profile for UI testing
+                        .requestMatchers("/profile").permitAll()
+                        // 2. TEMPORARILY allow the admin pages for UI testing
+                        .requestMatchers("/admin", "/admin/**").permitAll()
+                        // 3. Require authentication for everything else
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        // 3. Tell the bouncer exactly which custom URL to use for logging in
                         .loginPage("/login")
                         .permitAll()
                 );

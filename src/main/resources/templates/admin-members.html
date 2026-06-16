@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Members</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<div class="dashboard-wrapper admin-shell">
+    <div th:replace="admin-sidebar :: sidebar('members')"></div>
+
+    <main class="main-workspace admin-workspace">
+        <header class="top-header admin-header">
+            <div class="header-left">
+                <h1>Members</h1>
+                <p class="header-subtitle">Manage users, roles, and account activity.</p>
+            </div>
+
+            <div class="header-center">
+                <input type="text" class="header-search" placeholder="Search members...">
+            </div>
+
+            <div class="user-profile">
+                <strong>Admin</strong>
+                <div class="avatar admin-avatar"></div>
+            </div>
+        </header>
+
+        <section class="panel-grid">
+            <article class="admin-panel panel-wide">
+                <div class="panel-header">
+                    <div>
+                        <span class="panel-kicker">Members</span>
+                        <h2>Members page</h2>
+                    </div>
+                    <a th:href="@{/profile}" class="panel-action">Open profile</a>
+                </div>
+
+                <p class="page-copy">Approve accounts, review borrowing history, and manage permissions.</p>
+            </article>
+        </section>
+    </main>
+</div>
+</body>
+</html>
