@@ -3,6 +3,7 @@ package com.csc3402.smartlibrarysystem.model;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "BOOKS")
 public class Book {
 
     @Id
@@ -17,16 +18,38 @@ public class Book {
     private String status;
     @Column(name="avg_rating")
     private double avg_rating;
+    @Column(name="cover_url")
+    private String cover_url;
+    @Column(name="genre")
+    private String genre;
 
     public Book() {
     }
 
-    public Book(Long book_id, String title, String author, String status, double avg_rating) {
+    public Book(Long book_id, String title, String author, String status, double avg_rating, String cover_url, String genre) {
         this.book_id = book_id;
         this.title = title;
         this.author = author;
         this.status = status;
         this.avg_rating = avg_rating;
+        this.cover_url = cover_url;
+        this.genre = genre;
+    }
+
+    public String getCover_url() {
+        return cover_url;
+    }
+
+    public void setCover_url(String cover_url) {
+        this.cover_url = cover_url;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
     }
 
     public Long getBook_id() {
@@ -72,11 +95,13 @@ public class Book {
     @Override
     public String toString() {
         return "Book{" +
-                "book_id='" + book_id + '\'' +
+                "book_id=" + book_id +
                 ", title='" + title + '\'' +
                 ", author='" + author + '\'' +
                 ", status='" + status + '\'' +
                 ", avg_rating=" + avg_rating +
+                ", cover_url='" + cover_url + '\'' +
+                ", genre='" + genre + '\'' +
                 '}';
     }
 }

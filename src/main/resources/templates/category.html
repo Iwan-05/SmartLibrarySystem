@@ -1,83 +1,145 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Library System - Categories</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-</head>
-<body style="display: block;">
+    <!DOCTYPE html>
+    <html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Library System - Categories</title>
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+    </head>
+    <body style="display: block;">
 
-<div class="dashboard-wrapper">
+    <div class="dashboard-wrapper">
 
-    <aside class="sidebar">
-        <div class="brand-logo">THE BOOKS</div>
+        <aside class="sidebar">
+            <div class="brand-logo">THE BOOKS</div>
 
-        <nav class="nav-menu">
-            <a th:href="@{/dashboard}" class="nav-link">Discover</a>
-            <a th:href="@{/category}" class="nav-link active">Category</a>
-            <a th:href="@{/mylibrary}" class="nav-link">
-                My Library
-                <span class="nav-hint">Currently Borrowed</span>
-            </a>
+            <nav class="nav-menu">
+                <a th:href="@{/dashboard}" class="nav-link">Discover</a>
+                <a th:href="@{/category}" class="nav-link active">Category</a>
+                <a th:href="@{/mylibrary}" class="nav-link">
+                    My Library
+                    <span class="nav-hint">Currently Borrowed</span>
+                </a>
 
-            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
-                <a th:href="@{/profile}" class="nav-link">Profile</a>
-                <a th:href="@{/login}" class="nav-link">Log out</a>
+                <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                    <a th:href="@{/profile}" class="nav-link">Profile</a>
+                    <a th:href="@{/login}" class="nav-link">Log out</a>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-workspace">
+
+            <header class="top-header">
+                <div class="header-left">
+                    <h1>Categories</h1>
+                </div>
+
+                <div class="header-center">
+                    <input type="text"
+                           id="categorySearch"
+                           class="header-search"
+                           placeholder="Search within categories..."
+                           onkeyup="handleSearch()">
+                </div>
+
+                <div class="user-profile">
+                    <strong>Davis Workman</strong>
+                    <div class="avatar"></div>
+                </div>
+            </header>
+
+            <div class="category-filters">
+                <button class="filter-pill active" onclick="filterBooks('All Books', this)">All Books</button>
+                <button class="filter-pill" onclick="filterBooks('Business & Finance', this)">Business & Finance</button>
+                <button class="filter-pill" onclick="filterBooks('Design & UI/UX', this)">Design & UI/UX</button>
+                <button class="filter-pill" onclick="filterBooks('Computer Science', this)">Computer Science</button>
+                <button class="filter-pill" onclick="filterBooks('Fiction', this)">Fiction</button>
+                <button class="filter-pill" onclick="filterBooks('Horror', this)">Horror</button>
             </div>
-        </nav>
-    </aside>
 
-    <main class="main-workspace">
-
-        <header class="top-header">
-            <div class="header-left">
-                <h1>Categories</h1>
-            </div>
-
-            <div class="header-center">
-                <input type="text" class="header-search" placeholder="Search within categories...">
-            </div>
-
-            <div class="user-profile">
-                <strong>Davis Workman</strong>
-                <div class="avatar"></div>
-            </div>
-        </header>
-
-        <div class="category-filters">
-            <button class="filter-pill active">All Books</button>
-            <button class="filter-pill">Business & Finance</button>
-            <button class="filter-pill">Design & UI/UX</button>
-            <button class="filter-pill">Computer Science</button>
-            <button class="filter-pill">Fiction</button>
-            <button class="filter-pill">Self-Improvement</button>
-        </div>
-
-        <section>
-            <div class="book-shelf">
-
-                <div class="book-card" th:each="book : ${books}">
-                    <img th:src="${book.cover_url}" alt="Book Cover" class="book-cover">
-                    <div class="book-info">
-                        <h3 class="book-title" th:text="${book.title}">Book Title Placeholder</h3>
-                        <p class="book-author" th:text="${book.author}">Author Name</p>
-
-                        <div class="book-meta">
-                            <span class="rating-badge" th:text="'★ ' + ${book.avg_rating}">★ 0.0</span>
-                            <span class="status-tag"
-                                  th:classappend="${book.status == 'Available' ? 'available' : 'borrowed'}"
-                                  th:text="${book.status}">
-                                    Status
-                                </span>
+            <section>
+                <div class="book-shelf" id="bookShelf">
+                    <div class="book-card" th:each="book : ${books}">
+                        <img th:src="${book.cover_url}" alt="Book Cover" class="book-cover">
+                        <div class="book-info">
+                            <h3 class="book-title" th:text="${book.title}">Book Title Placeholder</h3>
+                            <p class="book-author" th:text="${book.author}">Author Name</p>
+                            <div class="book-meta">
+                                <span class="rating-badge" th:text="'★ ' + ${book.avg_rating}">★ 0.0</span>
+                                <span class="status-tag"
+                                      th:classappend="${book.status == 'Available' ? 'available' : 'borrowed'}"
+                                      th:text="${book.status}">
+                            Status
+                        </span>
+                            </div>
                         </div>
                     </div>
                 </div>
+            </section>
 
-            </div>
-        </section>
+            <script>
+                // Keep track of the active genre globally
+                let currentGenre = 'All Books';
 
-    </main>
-</div>
+                // Called whenever a category pill is clicked
+                function filterBooks(genre, btn) {
+                    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+                    btn.classList.add('active');
 
-</body>
-</html>
+                    currentGenre = genre; // Update active genre track
+                    fetchFilteredBooks();
+                }
+
+                // Called instantly as you type in the search bar
+                function handleSearch() {
+                    fetchFilteredBooks();
+                }
+
+                // Unified function to fetch results combining both criteria
+                function fetchFilteredBooks() {
+                    const searchInput = document.getElementById('categorySearch').value;
+
+                    const url = `/category/filter?genre=${encodeURIComponent(currentGenre)}&search=${encodeURIComponent(searchInput)}`;
+
+                    fetch(url)
+                        .then(res => res.json())
+                        .then(books => {
+                            const shelf = document.getElementById('bookShelf');
+                            shelf.innerHTML = '';
+
+                            if (books.length === 0) {
+                                shelf.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;">No books found matching criteria.</p>';
+                                return;
+                            }
+
+                            books.forEach(book => {
+                                // Prevent breaks from null database values using safe defaults
+                                const coverUrl = book.cover_url ? book.cover_url : '/images/default-cover.png';
+                                const rating = book.avg_rating ? book.avg_rating : '0.0';
+                                const status = book.status ? book.status : 'Unknown';
+                                const statusClass = status === 'Available' ? 'available' : 'borrowed';
+
+                                shelf.innerHTML += `
+                        <div class="book-card">
+                            <img src="${coverUrl}" alt="Book Cover" class="book-cover">
+                            <div class="book-info">
+                                <h3 class="book-title">${book.title}</h3>
+                                <p class="book-author">${book.author}</p>
+                                <div class="book-meta">
+                                    <span class="rating-badge">★ ${rating}</span>
+                                    <span class="status-tag ${statusClass}">${status}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                            });
+                        })
+                        .catch(err => console.error("Error updating category bookshelf:", err));
+                }
+            </script>
+
+        </main>
+    </div>
+
+    </body>
+    </html>
