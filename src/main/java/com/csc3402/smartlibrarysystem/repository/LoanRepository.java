@@ -14,4 +14,7 @@ public interface LoanRepository extends JpaRepository<Loan, Long>    {
 
     @Query("SELECT l FROM Loan l WHERE l.user_id = :userId AND l.return_date IS NOT NULL")
     List<Loan> findPastLoansByUserId(@Param("userId") String userId);
+
+    @Query("SELECT l FROM Loan l WHERE l.return_date IS NULL ORDER BY l.due_date ASC")
+    List<Loan> findAllActiveLoansOrderByDueDate();
 }
