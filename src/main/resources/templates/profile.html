@@ -35,7 +35,7 @@
             </div>
             <div class="header-center"></div>
             <div class="user-profile">
-                <strong>Davis Workman</strong>
+                <strong th:text="${currentUser.username}">Davis Workman</strong>
                 <div class="avatar"></div>
             </div>
         </header>
@@ -45,9 +45,9 @@
             <div class="profile-header-card">
                 <div class="avatar-large"></div>
                 <div class="profile-details">
-                    <h2 th:text="${user != null ? user.username : 'Davis Workman'}">Davis Workman</h2>
-                    <p>Faculty of Computer Science and Information Technology</p>
-                    <span class="role-badge" th:text="${user != null ? user.role : 'Student'}">Student</span>
+                    <h2 th:text="${currentUser != null ? currentUser.username : 'Davis Workman'}">Davis Workman</h2>
+                    <p th:text="${currentUser != null ? currentUser.faculty : 'Faculty of Computer Science and Information Technology'}">Faculty of Computer Science and Information Technology</p>
+                    <span class="role-badge" th:text="${currentUser != null ? currentUser.role : 'Student'}">Student</span>
                 </div>
             </div>
 
@@ -55,17 +55,17 @@
 
                 <div class="stat-card">
                     <h4>Active Loans</h4>
-                    <div class="stat-value">3</div>
+                    <div class="stat-value" th:text="${activeLoanCount}">3</div>
                 </div>
 
                 <div class="stat-card">
                     <h4>Books Read</h4>
-                    <div class="stat-value">12</div>
+                    <div class="stat-value" th:text="${pastLoanCount}">3</div>
                 </div>
 
                 <div class="stat-card">
                     <h4>Outstanding Fines</h4>
-                    <div class="stat-value penalty" th:text="${user != null ? 'RM ' + user.fine : 'RM 0.00'}">RM 0.00</div>
+                    <div class="stat-value penalty" th:text="${currentUser != null ? 'RM ' + currentUser.fine : 'RM 0.00'}">RM 4.00</div>
                 </div>
 
             </div>
