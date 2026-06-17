@@ -32,7 +32,11 @@
             <div class="sidebar-footer">
                 <a th:href="@{/dashboard}" class="nav-link">Public Dashboard</a>
                 <a th:href="@{/profile}" class="nav-link">Admin Profile</a>
-                <a th:href="@{/login}" class="nav-link">Log out</a>
+                <form th:action="@{/logout}" method="post" style="margin: 0;">
+                    <button type="submit" class="nav-link" style="width: 100%; text-align: left; background: transparent; border: none; cursor: pointer; font-family: inherit; font-size: inherit; color: inherit;">
+                        Log out
+                    </button>
+                </form>
             </div>
         </nav>
     </aside>

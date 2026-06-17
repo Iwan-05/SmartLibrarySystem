@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>THE BOOK - Register</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <style>
+        /* 1. Base Setup */
+        body.login-page {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #FAF8F5;
+            font-family: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 2. The Glassmorphism Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 40px rgba(130, 120, 110, 0.15);
+            border-radius: 24px;
+            padding: 50px 40px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+
+        /* 3. Typography & Icons */
+        .brand-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: var(--text-primary, #333);
+            color: white;
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            border-radius: 14px;
+            display: inline-block;
+        }
+        .glass-card h1 {
+            font-size: 1.8rem;
+            color: var(--text-primary, #222);
+            margin: 0 0 8px 0;
+        }
+        .glass-card p {
+            font-size: 0.95rem;
+            color: var(--text-secondary, #666);
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
+
+        /* 4. Inputs & Buttons */
+        .login-input {
+            width: 100%;
+            padding: 14px 16px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(200, 190, 180, 0.4);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        .login-input:focus {
+            outline: none;
+            border-color: var(--text-primary, #333);
+            background: #fff;
+        }
+
+        /* --- THE NEW CUSTOM DROPDOWN CSS --- */
+        .custom-select {
+            position: relative;
+            width: 100%;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        /* The visible button you click */
+        .select-selected {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(200, 190, 180, 0.4);
+            border-radius: 10px;
+            padding: 14px 16px;
+            font-size: 0.95rem;
+            color: var(--text-secondary, #666);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-color 0.3s, border-radius 0.2s;
+        }
+        /* When the menu is open */
+        .select-selected.active {
+            border-color: var(--text-primary, #333);
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        /* The little arrow icon */
+        .select-arrow {
+            width: 12px;
+            height: 12px;
+            transition: transform 0.3s ease;
+        }
+        .select-selected.active .select-arrow {
+            transform: rotate(180deg);
+        }
+        /* The floating dropdown list */
+        .select-items {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--text-primary, #333);
+            border-top: none;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 99;
+            max-height: 220px;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(130, 120, 110, 0.15);
+            display: none; /* Hidden by default */
+        }
+        /* Custom minimalist scrollbar for the dropdown */
+        .select-items::-webkit-scrollbar {
+            width: 6px;
+        }
+        .select-items::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .select-items::-webkit-scrollbar-thumb {
+            background: rgba(200, 190, 180, 0.8);
+            border-radius: 10px;
+        }
+        /* The individual UPM faculties */
+        .select-items div {
+            padding: 12px 16px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-primary, #333);
+            transition: background 0.2s;
+        }
+        .select-items div:hover {
+            background: rgba(200, 190, 180, 0.2);
+        }
+        /* --- END CUSTOM DROPDOWN CSS --- */
+
+        .btn-get-started {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--text-primary, #222);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            margin-top: 5px;
+        }
+        .btn-get-started:hover {
+            background-color: #000;
+            transform: translateY(-2px);
+        }
+
+        /* 5. Footer Link */
+        .register-link {
+            margin-top: 25px;
+            font-size: 0.9rem;
+            color: var(--text-secondary, #666);
+        }
+        .register-link a {
+            color: var(--text-primary, #222);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body class="login-page">
+
+<canvas id="networkCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></canvas>
+
+<div class="glass-card">
+
+    <div class="brand-icon">✨</div>
+
+    <h1>Join THE BOOKS</h1>
+    <p>Create an account to start discovering <br> and borrowing your next great read.</p>
+
+    <div th:if="${param.success}" style="background-color: #e6f4ea; color: #137333; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem;">
+        Account created successfully! You can now log in.
+    </div>
+    <div th:if="${param.error}" style="background-color: #fce8e6; color: #c5221f; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem;">
+        Registration failed. Please try again.
+    </div>
+
+    <form th:action="@{/register}" method="post" id="registerForm">
+        <input type="text" name="username" class="login-input" placeholder="Username..." required autocomplete="off">
+        <input type="password" name="password" class="login-input" placeholder="Create a Password" required autocomplete="new-password">
+        <input type="password" name="confirmPassword" class="login-input" placeholder="Confirm Password" required autocomplete="new-password">
+
+        <div class="custom-select">
+            <select name="faculty" id="realFacultySelect" style="display: none;" required>
+                <option value="" disabled selected>Select Your Faculty</option>
+                <option value="Faculty of Agriculture">Faculty of Agriculture</option>
+                <option value="Faculty of Agricultural and Forestry Sciences">Faculty of Agricultural and Forestry Sciences</option>
+                <option value="Faculty of Biotechnology and Biomolecular Sciences">Faculty of Biotechnology and Biomolecular Sciences</option>
+                <option value="Faculty of Computer Science and Information Technology">Faculty of Computer Science and Information Technology (FSKTM)</option>
+                <option value="Faculty of Design and Architecture">Faculty of Design and Architecture</option>
+                <option value="Faculty of Educational Studies">Faculty of Educational Studies</option>
+                <option value="Faculty of Engineering">Faculty of Engineering</option>
+                <option value="Faculty of Food Science and Technology">Faculty of Food Science and Technology</option>
+                <option value="Faculty of Forestry and Environment">Faculty of Forestry and Environment</option>
+                <option value="Faculty of Human Ecology">Faculty of Human Ecology</option>
+                <option value="Faculty of Humanities, Management and Science">Faculty of Humanities, Management and Science</option>
+                <option value="Faculty of Medicine and Health Sciences">Faculty of Medicine and Health Sciences</option>
+                <option value="Faculty of Modern Languages and Communication">Faculty of Modern Languages and Communication</option>
+                <option value="Faculty of Science">Faculty of Science</option>
+                <option value="Faculty of Veterinary Medicine">Faculty of Veterinary Medicine</option>
+                <option value="School of Business and Economics">School of Business and Economics</option>
+            </select>
+
+            <div class="select-selected">
+                <span id="selectedFacultyText">Select Your Faculty</span>
+                <svg class="select-arrow" xmlns="http://www.w3.org/2000/svg" fill="#666" viewBox="0 0 16 16"><path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>
+            </div>
+
+            <div class="select-items">
+            </div>
+        </div>
+
+        <input type="hidden" name="role" value="STUDENT">
+
+        <button type="button" onclick="validateAndSubmit()" class="btn-get-started">Create Account</button>
+    </form>
+
+    <div class="register-link">
+        Already have an account? <a th:href="@{/login}">Log in here</a>
+    </div>
+
+</div>
+
+<script>
+    // --- CUSTOM DROPDOWN LOGIC ---
+    document.addEventListener("DOMContentLoaded", function() {
+        const realSelect = document.getElementById("realFacultySelect");
+        const customSelectText = document.getElementById("selectedFacultyText");
+        const selectBox = document.querySelector(".select-selected");
+        const selectItemsContainer = document.querySelector(".select-items");
+
+        // Build the custom list based on the hidden HTML options
+        Array.from(realSelect.options).forEach((option, index) => {
+            if (index === 0) return; // Skip the placeholder
+
+            const itemDiv = document.createElement("div");
+            itemDiv.innerHTML = option.text;
+            itemDiv.addEventListener("click", function() {
+                // Update the visible text
+                customSelectText.innerHTML = this.innerHTML;
+                customSelectText.style.color = "#333";
+
+                // Crucial: Update the hidden select so the database gets the right data
+                realSelect.selectedIndex = index;
+
+                // Close the menu
+                selectBox.click();
+            });
+            selectItemsContainer.appendChild(itemDiv);
+        });
+
+        // Toggle menu open/close
+        selectBox.addEventListener("click", function(e) {
+            e.stopPropagation();
+            this.classList.toggle("active");
+            if (selectItemsContainer.style.display === "block") {
+                selectItemsContainer.style.display = "none";
+            } else {
+                selectItemsContainer.style.display = "block";
+            }
+        });
+
+        // Close menu if user clicks anywhere else on the page
+        document.addEventListener("click", function() {
+            selectBox.classList.remove("active");
+            selectItemsContainer.style.display = "none";
+        });
+    });
+
+    // Form Validation: Make sure they actually picked a faculty
+    function validateAndSubmit() {
+        const realSelect = document.getElementById("realFacultySelect");
+        const selectBox = document.querySelector(".select-selected");
+
+        if (realSelect.value === "") {
+            selectBox.style.borderColor = "#c5221f"; // Flash red if empty
+            setTimeout(() => selectBox.style.borderColor = "rgba(200, 190, 180, 0.4)", 1500);
+        } else {
+            document.getElementById("registerForm").submit();
+        }
+    }
+
+    // --- BACKGROUND NETWORK ANIMATION LOGIC ---
+    const canvas = document.getElementById('networkCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
+
+    function init() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        particles = [];
+        const particleCount = Math.floor((width * height) / 16000);
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                vx: (Math.random() - 0.5) * 0.35,
+                vy: (Math.random() - 0.5) * 0.35,
+                radius: Math.random() * 2 + 0.8
+            });
+        }
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        ctx.clearRect(0, 0, width, height);
+
+        for (let i = 0; i < particles.length; i++) {
+            let p = particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+
+            if (p.x < 0 || p.x > width) p.vx *= -1;
+            if (p.y < 0 || p.y > height) p.vy *= -1;
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(160, 150, 135, 0.6)';
+            ctx.fill();
+
+            for (let j = i + 1; j < particles.length; j++) {
+                let p2 = particles[j];
+                let dx = p.x - p2.x;
+                let dy = p.y - p2.y;
+                let dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < 140) {
+                    ctx.beginPath();
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.strokeStyle = `rgba(160, 150, 135, ${(1 - dist / 140) * 0.5})`;
+                    ctx.lineWidth = 0.6;
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+
+    window.addEventListener('resize', init);
+    init();
+    animate();
+</script>
+</body>
+</html>
