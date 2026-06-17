@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "Loans")
 public class Loan {
 
     @Id
@@ -12,8 +13,9 @@ public class Loan {
     private Long loan_id;
     @Column(name="user_id")
     private String user_id;
-    @Column(name="book_id")
-    private String book_id;
+    @ManyToOne
+    @JoinColumn(name = "book_id")
+    private Book book;
     @Column(name="borrow_date")
     private LocalDateTime borrow_date;
     @Column(name="due_date")
@@ -26,10 +28,10 @@ public class Loan {
     public Loan() {
     }
 
-    public Loan(Long loan_id, String user_id, String book_id, LocalDateTime borrow_date, LocalDateTime due_date, LocalDateTime return_date, double fine_amount) {
+    public Loan(Long loan_id, String user_id, Book book, LocalDateTime borrow_date, LocalDateTime due_date, LocalDateTime return_date, double fine_amount) {
         this.loan_id = loan_id;
         this.user_id = user_id;
-        this.book_id = book_id;
+        this.book = book;
         this.borrow_date = borrow_date;
         this.due_date = due_date;
         this.return_date = return_date;
@@ -52,12 +54,12 @@ public class Loan {
         this.user_id = user_id;
     }
 
-    public String getBook_id() {
-        return book_id;
+    public Book getBook() {
+        return book;
     }
 
-    public void setBook_id(String book_id) {
-        this.book_id = book_id;
+    public void setBook(Book book) {
+        this.book = book;
     }
 
     public LocalDateTime getBorrow_date() {
@@ -95,9 +97,9 @@ public class Loan {
     @Override
     public String toString() {
         return "Loan{" +
-                "loan_id='" + loan_id + '\'' +
+                "loan_id=" + loan_id +
                 ", user_id='" + user_id + '\'' +
-                ", book_id='" + book_id + '\'' +
+                ", book=" + (book != null ? book.getTitle() : null) +
                 ", borrow_date=" + borrow_date +
                 ", due_date=" + due_date +
                 ", return_date=" + return_date +

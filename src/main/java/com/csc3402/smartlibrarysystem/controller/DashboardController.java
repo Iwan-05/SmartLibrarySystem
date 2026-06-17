@@ -1,17 +1,21 @@
 package com.csc3402.smartlibrarysystem.controller;
 
 import com.csc3402.smartlibrarysystem.model.Book;
+import com.csc3402.smartlibrarysystem.model.Loan;
 import com.csc3402.smartlibrarysystem.model.User;
 import com.csc3402.smartlibrarysystem.repository.BookRepository;
+import com.csc3402.smartlibrarysystem.repository.LoanRepository;
 import com.csc3402.smartlibrarysystem.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -20,12 +24,16 @@ public class DashboardController {
     @Autowired
     private BookRepository bookRepository;
 
-    //@Autowired
-    //private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private LoanRepository loanRepository;
 
     @GetMapping("/dashboard")
-    public String showDashboard(@RequestParam(name = "search", required = false) String search, Model model) {
-
+    public String showDashboard(@RequestParam(name = "search", required = false) String search,
+                                Model model,
+                                Principal principal) {
         List<Book> filteredBooks;
 
         if (search != null && !search.trim().isEmpty()) {
@@ -37,8 +45,8 @@ public class DashboardController {
 
         model.addAttribute("books", filteredBooks);
 
-        //User currentUser = userRepository.findByUsername(principal.getName());
-        //model.addAttribute("currentUser", currentUser);
+        User currentUser = userRepository.findByUsername(principal.getName()); //func nak tarik username ke dashbaord
+        model.addAttribute("currentUser", currentUser);
 
         return "dashboard";
     }
@@ -86,18 +94,47 @@ public class DashboardController {
     }
 
     @GetMapping("/category")
-    public String showCategory(Model model) {
+    public String showCategory(Model model,Principal principal) {
         model.addAttribute("books", bookRepository.findAll());
+
+        User currentUser = userRepository.findByUsername(principal.getName()); //func nak tarik username ke dashbaord
+        model.addAttribute("currentUser", currentUser);
+
         return "category";
     }
 
     @GetMapping("/mylibrary")
-    public String showMyLibrary() {
+    public String showMyLibrary(Model model,Principal principal) {
+
+        User currentUser = userRepository.findByUsername(principal.getName()); //func nak tarik username ke dashbaord
+        model.addAttribute("currentUser", currentUser);
+
+        List<Loan> activeLoans = loanRepository.findActiveLoansByUserId(currentUser.getUser_id());
+        model.addAttribute("loans", activeLoans);
         return "mylibrary";
     }
 
     @GetMapping("/profile")
-    public String showProfile() {
-        return "profile";
+    public String showProfile(Model model,Principal principal) {
+        User currentUser = userRepository.findByUsername(principal.getName()); //func nak tarik username ke dashbaord
+        model.addAttribute("currentUser", currentUser);
+
+        List<Loan> activeLoans = loanRepository.findActiveLoansByUserId(currentUser.getUser_id());
+        model.addAttribute("activeLoanCount", activeLoans.size());
+        List<Loan> pastLoans = loanRepository.findPastLoansByUserId(currentUser.getUser_id());
+        model.addAttribute("pastLoanCount", pastLoans.size());
+       return "profile";
+    }
+
+    @PostMapping("/returnBook")
+    public String returnBook(@RequestParam("loanId") Long loanId) {
+        Loan loan = loanRepository.findById(loanId).orElse(null);
+
+        if (loan != null) {
+            loan.setReturn_date(LocalDateTime.now());
+            loanRepository.save(loan);
+        }
+
+        return "redirect:/mylibrary";
     }
 }

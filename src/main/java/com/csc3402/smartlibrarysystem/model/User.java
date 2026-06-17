@@ -1,26 +1,35 @@
 package com.csc3402.smartlibrarysystem.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "Users")
 public class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="user_id")
     private String user_id;
+    @Column(name="username")
     private String username;
+    @Column(name="password")
     private String password;
+    @Column(name="role")
     private String role;
+    @Column(name="fine")
     private double fine;
+    @Column(name="faculty")
+    private String faculty;
 
     public User() {
     }
 
-    public User(String user_id, String username, String password, String role, double fine) {
+    public User(String user_id, String username, String password, String role, double fine, String faculty) {
         this.user_id = user_id;
         this.username = username;
         this.password = password;
         this.role = role;
         this.fine = fine;
+        this.faculty = faculty;
     }
 
     public String getUser_id() {
@@ -63,14 +72,23 @@ public class User {
         this.fine = fine;
     }
 
+    public String getFaculty() {
+        return faculty;
+    }
+
+    public void setFaculty(String faculty) {
+        this.faculty = faculty;
+    }
+
     @Override
     public String toString() {
-        return "Book{" +
+        return "User{" +
                 "user_id='" + user_id + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", role='" + role + '\'' +
                 ", fine=" + fine +
+                ", faculty='" + faculty + '\'' +
                 '}';
     }
 }
