@@ -3,41 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Loans</title>
+    <title>Admin Loans | Track & Manage</title>
     <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <style>
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; color: var(--text-secondary, #666666); }
+        .form-control { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color, #e5e5e5); box-sizing: border-box; font-family: inherit; font-size: 0.95rem; }
+        .form-control:focus { outline: none; border-color: var(--accent-color, #204035); }
+        .submit-btn { width: 100%; border: none; cursor: pointer; padding: 14px; border-radius: 12px; background: var(--accent-color, #204035); color: #ffffff; font-weight: 700; font-size: 0.95rem; }
+        .cancel-btn { display: block; text-align: center; margin-top: 10px; font-size: 0.85rem; color: var(--text-secondary, #666666); text-decoration: underline; }
+        .action-icon-btn { padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; background: rgba(32, 64, 53, 0.08); color: var(--accent-color, #204035); }
+        .action-icon-btn.delete { background: rgba(197, 34, 31, 0.08); color: #c5221f; margin-left: 5px; }
+        .alert-success { padding: 12px; background: rgba(32, 64, 53, 0.1); color: var(--accent-color, #204035); border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem; font-weight: 600; }
+    </style>
 </head>
 <body>
 <div class="dashboard-wrapper admin-shell">
-    <div th:replace="admin-sidebar :: sidebar('loans')"></div>
+    <div th:replace="~{admin-sidebar :: sidebar('loans')}"></div>
 
     <main class="main-workspace admin-workspace">
         <header class="top-header admin-header">
             <div class="header-left">
-                <h1>Loans</h1>
-                <p class="header-subtitle">Track active, overdue, and returned loans.</p>
+                <h1>Loans Registry</h1>
+                <p class="header-subtitle">Track active, overdue, and returned book allocations.</p>
             </div>
-
             <div class="header-center">
                 <input type="text" class="header-search" placeholder="Search loans...">
             </div>
-
             <div class="user-profile">
                 <strong>Admin</strong>
                 <div class="avatar admin-avatar"></div>
             </div>
         </header>
 
+        <div th:if="${successMessage}" class="alert-success" th:text="${successMessage}"></div>
+
         <section class="panel-grid">
             <article class="admin-panel panel-wide">
                 <div class="panel-header">
                     <div>
-                        <span class="panel-kicker">Loans</span>
-                        <h2>Loans page</h2>
+                        <span class="panel-kicker">Tracking</span>
+                        <h2>Current & Past Loans</h2>
                     </div>
-                    <a th:href="@{/mylibrary}" class="panel-action">View public loan flow</a>
                 </div>
 
-                <p class="page-copy">Review due dates, mark returns, and manage current borrow records.</p>
+                <div class="table-shell">
+                    <table class="admin-table">
+                        <thead>
+                        <tr>
+                            <th>Book</th>
+                            <th>Member ID</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="loan : ${allLoans}">
+                            <td th:text="${loan.book != null ? loan.book.title : 'Unknown Book'}">Clean Code</td>
+                            <td th:text="${loan.user_id}">B032110045</td>
+                            <td th:text="${loan.due_date != null ? #temporals.format(loan.due_date, 'dd MMM yyyy') : '-'}">15 Aug 2026</td>
+                            <td>
+                                    <span class="status-pill"
+                                          th:classappend="${loan.return_date != null ? 'available' : (loan.due_date != null && loan.due_date.isBefore(#temporals.createNow()) ? 'borrowed' : 'borrowed')}"
+                                          th:text="${loan.return_date != null ? 'Returned' : (loan.due_date != null && loan.due_date.isBefore(#temporals.createNow()) ? 'Overdue' : 'Active')}">
+                                        Active
+                                    </span>
+                            </td>
+                            <td>
+                                <a th:href="@{/admin/loans/edit/{id}(id=${loan.loan_id})}" class="action-icon-btn">Edit</a>
+                                <a th:href="@{/admin/loans/delete/{id}(id=${loan.loan_id})}" class="action-icon-btn delete"
+                                   onclick="return confirm('Remove this loan record permanently?');">Del</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(allLoans)}">
+                            <td colspan="5" style="text-align: center; color: var(--text-secondary);">No loan activities recorded.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+            <article class="admin-panel">
+                <div class="panel-header">
+                    <div>
+                        <span class="panel-kicker">Transaction</span>
+                        <h2 th:text="${loanForm.loan_id != null} ? 'Update Loan Status' : 'Issue New Book Loan'">Issue Loan</h2>
+                    </div>
+                </div>
+
+                <form th:action="@{/admin/loans/save}" th:object="${loanForm}" method="POST">
+                    <input type="hidden" th:field="*{loan_id}" />
+
+                    <div class="form-group">
+                        <label for="loanBook">Select Book</label>
+                        <select id="loanBook" th:field="*{book}" class="form-control" required>
+                            <option value="">-- Choose Book --</option>
+                            <option th:each="b : ${booksList}" th:value="${b.book_id}" th:text="${b.title}"></option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loanUser">Select Member</label>
+                        <select id="loanUser" th:field="*{user_id}" class="form-control" required>
+                            <option value="">-- Choose Member --</option>
+                            <option th:each="u : ${membersList}" th:value="${u.user_id}" th:text="${u.username} + ' (' + ${u.user_id} + ')'"></option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dueDate">Due Date</label>
+                        <input type="date" id="dueDate" name="inputDueDate"
+                               th:value="*{due_date != null} ? ${#temporals.format(due_date, 'yyyy-MM-dd')} : ''"
+                               class="form-control" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loanStatus">Status Flag</label>
+                        <select id="loanStatus" name="selectedStatus" class="form-control">
+                            <option value="Active" th:selected="${loanForm.return_date == null}">Active / Borrowed</option>
+                            <option value="Returned" th:selected="${loanForm.return_date != null}">Returned</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="submit-btn" th:text="${loanForm.loan_id != null} ? 'Update Loan' : 'Issue Loan'">Process Loan</button>
+                    <a th:if="${loanForm.loan_id != null}" th:href="@{/admin/loans}" class="cancel-btn">Cancel Edit</a>
+                </form>
             </article>
         </section>
     </main>

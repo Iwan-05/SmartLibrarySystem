@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="#{admin.title}">Admin Dashboard</title>
+    <title th:text="#{admin.title != null ? admin.title : 'Admin Dashboard'}">Admin Dashboard</title>
     <link rel="stylesheet" th:href="@{/css/admin.css}">
 </head>
 <body>
 <div class="dashboard-wrapper admin-shell">
-    <div th:replace="admin-sidebar :: sidebar(${activeSection})"></div>
+    <div th:replace="~{admin-sidebar :: sidebar(${activeSection != null ? activeSection : 'dashboard'})}"></div>
 
     <main class="main-workspace admin-workspace">
         <header class="top-header admin-header">
             <div class="header-left">
-                <h1 th:text="#{admin.title}">Admin Dashboard</h1>
+                <h1 th:text="#{admin.title != null ? admin.title : 'Admin Dashboard'}">Admin Dashboard</h1>
                 <p class="header-subtitle">Manage the library from one place.</p>
             </div>
 
@@ -22,7 +22,7 @@
             </div>
 
             <div class="user-profile">
-                <strong th:text="${currentUser.username}">Admin</strong>
+                <strong th:text="${currentUser?.username != null ? currentUser.username : 'Admin'}">Admin</strong>
                 <div class="avatar admin-avatar"></div>
             </div>
         </header>
@@ -30,22 +30,22 @@
         <section id="overview" class="summary-grid">
             <article class="summary-card accent">
                 <span class="summary-label">Books</span>
-                <strong class="summary-value" th:text="${totalBook}">128</strong>
-                <span class="summary-meta">2 added this week</span>
+                <strong class="summary-value" th:text="${totalBook != null ? totalBook : '0'}">128</strong>
+                <span class="summary-meta">Catalog size</span>
             </article>
             <article class="summary-card">
                 <span class="summary-label">Loans</span>
-                <strong class="summary-value" th:text="${activeLoanCount}">42</strong>
-                <span class="summary-meta">1 due today</span>
+                <strong class="summary-value" th:text="${activeLoanCount != null ? activeLoanCount : '0'}">42</strong>
+                <span class="summary-meta">Active transactions</span>
             </article>
             <article class="summary-card">
                 <span class="summary-label">Members</span>
-                <strong class="summary-value" th:text="${totalMember}">367</strong>
-                <span class="summary-meta">23 pending approval</span>
+                <strong class="summary-value" th:text="${totalMember != null ? totalMember : '0'}">367</strong>
+                <span class="summary-meta">Registered users</span>
             </article>
             <article class="summary-card">
                 <span class="summary-label">Ratings</span>
-                <strong class="summary-value" th:text="${avgBookRating}">4.8</strong>
+                <strong class="summary-value" th:text="${avgBookRating != null ? avgBookRating : '0.0'}">4.8</strong>
                 <span class="summary-meta">Average across catalog</span>
             </article>
         </section>
@@ -63,23 +63,26 @@
                 <div class="table-shell">
                     <table class="admin-table">
                         <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Author</th>
-                                <th>Status</th>
-                                <th>Rating</th>
-                            </tr>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Status</th>
+                            <th>Rating</th>
+                        </tr>
                         </thead>
                         <tbody>
-                         <tr th:each="book : ${recentBooks}">
+                        <tr th:each="book : ${recentBooks}">
                             <td th:text="${book.title}">The Pragmatic Programmer</td>
                             <td th:text="${book.author}">Andrew Hunt</td>
                             <td>
-                                 <span class="status-pill"
-                                 th:classappend="${book.status == 'Available' ? 'available' : 'borrowed'}"
-                                       th:text="${book.status}">Available</span>
+                                     <span class="status-pill"
+                                           th:classappend="${book.status == 'Available' ? 'available' : 'borrowed'}"
+                                           th:text="${book.status}">Available</span>
                             </td>
                             <td th:text="${book.avg_rating}">4.9</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(recentBooks)}">
+                            <td colspan="4" style="text-align: center; color: var(--text-secondary);">No recent books added.</td>
                         </tr>
                         </tbody>
                     </table>
@@ -96,10 +99,13 @@
 
                 <ul class="detail-list">
                     <li th:each="loan : ${recentLoans}">
-                        <span class="detail-title" th:text="${loan.book.title}">How to Build a Habit</span>
+                        <span class="detail-title" th:text="${loan.book?.title}">How to Build a Habit</span>
                         <span class="detail-meta"
-                              th:classappend="${loan.due_date.isBefore(#temporals.createNow().plusDays(1)) ? 'urgent' : 'safe'}"
-                              th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">Due in 4 hours</span>
+                              th:classappend="${loan.due_date != null && loan.due_date.isBefore(#temporals.createNow()) ? 'urgent' : 'safe'}"
+                              th:text="${loan.due_date != null ? #temporals.format(loan.due_date, 'dd MMM yyyy') : 'No Due Date'}">Due Date</span>
+                    </li>
+                    <li th:if="${#lists.isEmpty(recentLoans)}" style="color: var(--text-secondary); font-size: 0.9rem;">
+                        No active loans pending return.
                     </li>
                 </ul>
             </article>
@@ -115,35 +121,13 @@
                 <div class="activity-stack">
                     <div class="activity-item">
                         <div>
-                            <strong>Aisyah Rahman</strong>
-                            <p>Requested access to the science category.</p>
+                            <strong>System Status</strong>
+                            <p>All security modules and membership access channels are online.</p>
                         </div>
-                        <span class="status-pill available">New</span>
-                    </div>
-                    <div class="activity-item">
-                        <div>
-                            <strong>Daniel Tan</strong>
-                            <p>Returned a borrowed copy of Clean Code.</p>
-                        </div>
-                        <span class="status-pill borrowed">2h ago</span>
+                        <span class="status-pill available">Active</span>
                     </div>
                 </div>
             </article>
-
-<!--            <article id="settings" class="admin-panel">
-                <div class="panel-header">
-                    <div>
-                        <span class="panel-kicker">Quick actions</span>
-                        <h2>Settings</h2>
-                    </div>
-                </div>
-
-                <div class="action-stack">
-                    <a th:href="@{/admin/books}" class="action-button">Create book entry</a>
-                    <a th:href="@{/admin/settings}" class="action-button secondary">Export report</a>
-                    <a th:href="@{/profile}" class="action-button secondary">Manage roles</a>
-                </div>
-            </article>-->
         </section>
     </main>
 </div>
