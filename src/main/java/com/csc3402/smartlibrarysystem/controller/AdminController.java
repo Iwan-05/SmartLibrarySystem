@@ -1,5 +1,6 @@
 package com.csc3402.smartlibrarysystem.controller;
 
+import com.csc3402.smartlibrarysystem.BookAPI.GoogleBooksService;
 import com.csc3402.smartlibrarysystem.model.Book;
 import com.csc3402.smartlibrarysystem.model.Loan;
 import com.csc3402.smartlibrarysystem.model.User;
@@ -29,11 +30,17 @@ public class AdminController {
     double totalAvgValue=0;
 
 
-
-
     @GetMapping("/loans")
     public String showLoans(Model model) {
         model.addAttribute("activeSection", "loans");
+
+        // Change this line to use the new ordered method
+        model.addAttribute("allLoans", loanRepository.findAllOrderedByDate());
+
+        if (!model.containsAttribute("loanForm")) {
+            model.addAttribute("loanForm", new Loan());
+        }
+
         return "admin-loans";
     }
 
@@ -100,8 +107,27 @@ public class AdminController {
 
     // 2. Handle saving a new book OR updating an existing one
     @PostMapping("/books/save")
-    public String saveBook(@ModelAttribute("bookForm") Book book, RedirectAttributes redirectAttributes) {
-        bookRepository.save(book);
+    public String saveBook(@ModelAttribute("bookForm") Book bookForm, RedirectAttributes redirectAttributes) {
+        // If it's an edit operation (id exists)
+        if (bookForm.getBook_id() != null) {
+            // 1. Fetch the actual existing record from DB
+            Book existingBook = bookRepository.findById(bookForm.getBook_id()).orElse(null);
+
+            if (existingBook != null) {
+                // 2. Map ONLY the fields that are present in the form
+                existingBook.setTitle(bookForm.getTitle());
+                existingBook.setAuthor(bookForm.getAuthor());
+                existingBook.setStatus(bookForm.getStatus());
+                existingBook.setAvg_rating(bookForm.getAvg_rating());
+
+                // 3. Save the updated database record (unmapped fields stay safe!)
+                bookRepository.save(existingBook);
+            }
+        } else {
+            // If it's a completely new book, just save it directly
+            bookRepository.save(bookForm);
+        }
+
         redirectAttributes.addFlashAttribute("successMessage", "Book catalog registry updated successfully!");
         return "redirect:/admin/books";
     }
@@ -123,6 +149,33 @@ public class AdminController {
     public String deleteBook(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         bookRepository.deleteById(id);
         redirectAttributes.addFlashAttribute("successMessage", "Book deleted successfully!");
+        return "redirect:/admin/books";
+    }
+    @Autowired
+    private GoogleBooksService googleBooksService;
+
+    @PostMapping("/books/fetch-and-save")
+    public String autoFetchBook(@RequestParam("searchQuery") String searchQuery, RedirectAttributes redirectAttributes) {
+
+        // 1. Fetch data from Google API ONLY when the form button is clicked
+        Book apiBook = googleBooksService.fetchBookByIsbn(searchQuery);
+
+        if (apiBook != null) {
+            // 2. Look up the existing rows using columns you already have
+            java.util.Optional<Book> existingBook = bookRepository.findByTitleAndAuthor(apiBook.getTitle(), apiBook.getAuthor());
+
+            if (existingBook.isPresent()) {
+                // If the book is found, we block it here. No DB load!
+                redirectAttributes.addFlashAttribute("errorMessage", "The book '" + apiBook.getTitle() + "' already exists in your library!");
+            } else {
+                // If it's completely new, save it ONCE.
+                bookRepository.save(apiBook);
+                redirectAttributes.addFlashAttribute("successMessage", "New book imported successfully!");
+            }
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "No book matches found on Google Books.");
+        }
+
         return "redirect:/admin/books";
     }
 }

@@ -149,12 +149,26 @@
             </article>
 
             <article class="admin-panel">
-                <div class="panel-header">
-                    <div>
-                        <span class="panel-kicker">Data Entry</span>
-                        <h2 th:text="${bookForm.book_id != null} ? 'Modify Existing Book' : 'Add New Book Entry'">Add New Book</h2>
+                <article class="admin-panel">
+
+                    <div class="panel-header" style="border-bottom: 1px dashed var(--border-color, #e5e5e5); padding-bottom: 15px; margin-bottom: 20px;">
+                        <div>
+                            <span class="panel-kicker">Automation</span>
+                            <h2>Google Books Import</h2>
+                        </div>
                     </div>
-                </div>
+
+                    <div th:if="${errorMessage}" class="alert-success" style="background: rgba(197, 34, 31, 0.1); color: #c5221f;" th:text="${errorMessage}"></div>
+
+                    <form th:action="@{/admin/books/fetch-and-save}" method="POST" style="margin-bottom: 30px;">
+                        <div class="form-group">
+                            <label for="apiSearch">Search & Auto-Insert</label>
+                            <input type="text" id="apiSearch" name="searchQuery" class="form-control" required placeholder="Type Title, Author, or ISBN..." />
+                        </div>
+                        <button type="submit" class="submit-btn" style="background-color: #28a745;">Import Book Data</button>
+                    </form>
+
+                    <hr style="border: 0; border-top: 1px solid var(--border-color, #e5e5e5); margin: 25px 0;" />
 
                 <form th:action="@{/admin/books/save}" th:object="${bookForm}" method="POST">
                     <input type="hidden" th:field="*{book_id}" />

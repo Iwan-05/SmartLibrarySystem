@@ -63,8 +63,8 @@
                      th:data-author="${book.author}"
                      th:data-rating="${book.avg_rating}"
                      th:data-cover="${book.cover_url}"
-                     onclick="openBookDetails(this.getAttribute('data-id'), this.getAttribute('data-title'), this.getAttribute('data-author'), '', this.getAttribute('data-rating'), this.getAttribute('data-cover'))">
-
+                     th:data-synopsis="${book.synopsis}"
+                     onclick="openBookDetails(this.getAttribute('data-id'), this.getAttribute('data-title'), this.getAttribute('data-author'), this.getAttribute('data-synopsis'), this.getAttribute('data-rating'), this.getAttribute('data-cover'))">
                     <img th:src="${book.cover_url != null ? book.cover_url : '/images/default-cover.png'}" alt="Book Cover" class="book-cover">
 
                     <div class="book-info">
@@ -181,8 +181,7 @@
         document.getElementById('detailBookId').value = id;
         document.getElementById('detailTitle').innerText = title;
         document.getElementById('detailAuthor').innerText = "By " + author;
-
-        document.getElementById('detailSynopsis').innerText = synopsis ? synopsis : "No synopsis available for this title.";
+        document.getElementById('detailSynopsis').innerText = (synopsis && synopsis !== 'null') ? synopsis : "No synopsis available for this title.";
         document.getElementById('detailRating').innerText = "(" + (rating ? rating : '0.0') + ")";
 
         const coverImg = document.getElementById('detailCoverImg');

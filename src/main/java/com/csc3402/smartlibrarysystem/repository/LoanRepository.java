@@ -20,4 +20,7 @@ public interface LoanRepository extends JpaRepository<Loan, Long>    {
 
     @Query("SELECT l FROM Loan l WHERE l.return_date IS NOT NULL ORDER BY l.return_date DESC")
     List<Loan> findRecentlyReturnedLoans();
+
+    @Query("SELECT l FROM Loan l ORDER BY l.borrow_date DESC")
+    List<Loan> findAllOrderedByDate();
 }

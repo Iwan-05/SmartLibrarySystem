@@ -165,16 +165,21 @@ public class DashboardController {
         User currentUser = userRepository.findByUsername(principal.getName());
         Book book = bookRepository.findById(bookId).orElse(null);
 
-        if (book != null && "Available".equals(book.getStatus())) {
-            Loan loan = new Loan();
-            loan.setUser_id(currentUser.getUser_id());
-            loan.setBorrow_date(LocalDateTime.now());
-            loan.setDue_date(LocalDateTime.now().plusDays(7));
-            loan.setBook(book);
-            loanRepository.save(loan);
+        // 1. Check if the book exists and is actually Available
+        if (book != null && "Available".equalsIgnoreCase(book.getStatus())) {
 
+            // 2. Update and save the BOOK FIRST to prevent Hibernate conflict
             book.setStatus("Borrowed");
             bookRepository.save(book);
+
+            // 3. Create and save the LOAN SECOND
+            Loan loan = new Loan();
+            loan.setUser_id(String.valueOf(currentUser.getUser_id())); // Converted to String since your loan model uses String for user_id
+            loan.setBorrow_date(LocalDateTime.now());
+            loan.setDue_date(LocalDateTime.now().plusDays(7));
+            loan.setBook(book); // References the already-updated book
+
+            loanRepository.save(loan);
         }
 
         return "redirect:/dashboard";
