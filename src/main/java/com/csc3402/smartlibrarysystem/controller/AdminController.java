@@ -28,15 +28,11 @@ public class AdminController {
 
     private double totalAvgValue = 0;
 
-    // ==========================================
-    // CORE DASHBOARD OVERVIEW MAPPING
-    // ==========================================
     @GetMapping("")
     public String showAdmin(Model model, Principal principal) {
         totalAvgValue = 0;
         model.addAttribute("activeSection", "dashboard");
 
-        // Safe check for User Sessions
         if (principal != null && principal.getName() != null) {
             User currentUser = userRepository.findByUsername(principal.getName());
             model.addAttribute("currentUser", currentUser);
@@ -46,7 +42,6 @@ public class AdminController {
             model.addAttribute("currentUser", guest);
         }
 
-        // Dashboard aggregations using correct repository methods
         List<Loan> activeLoans = loanRepository.findAllActiveLoansOrderByDueDate();
         model.addAttribute("activeLoanCount", activeLoans != null ? activeLoans.size() : 0);
 
@@ -66,7 +61,6 @@ public class AdminController {
             model.addAttribute("avgBookRating", "0.00");
         }
 
-        // Slice lists for Recent items widget
         if (totalBooks != null && !totalBooks.isEmpty()) {
             List<Book> recentBooks = totalBooks.size() > 3
                     ? totalBooks.subList(totalBooks.size() - 3, totalBooks.size())
@@ -84,9 +78,6 @@ public class AdminController {
         return "admin";
     }
 
-    // ==========================================
-    // BOOKS MANAGEMENT
-    // ==========================================
     @GetMapping("/books")
     public String showBooks(Model model, Principal principal) {
         model.addAttribute("activeSection", "books");
@@ -134,9 +125,6 @@ public class AdminController {
         return "redirect:/admin/books";
     }
 
-    // ==========================================
-    // LOANS MANAGEMENT
-    // ==========================================
     @GetMapping("/loans")
     public String showLoans(Model model, Principal principal) {
         model.addAttribute("activeSection", "loans");
@@ -175,25 +163,20 @@ public class AdminController {
                            @RequestParam("selectedStatus") String selectedStatus, // <-- Capture the dropdown value manually
                            RedirectAttributes redirectAttributes) {
 
-        // 1. Handle due date assignment conversion safely
         if (inputDueDate != null && !inputDueDate.isEmpty()) {
             loan.setDue_date(LocalDate.parse(inputDueDate).atStartOfDay());
         }
 
-        // 2. Default initialize values for completely new records
         if (loan.getLoan_id() == null) {
             loan.setBorrow_date(LocalDateTime.now());
             loan.setFine_amount(0.0);
         }
 
-        // 3. Instead of checking loan.getStatus(), check the incoming form string directly
         if ("Returned".equals(selectedStatus)) {
-            // Only stamp the date if it wasn't already marked as returned previously
             if (loan.getReturn_date() == null) {
                 loan.setReturn_date(LocalDateTime.now());
             }
         } else {
-            // If the admin switches a returned book back to active/overdue, wipe out the return date timestamp
             loan.setReturn_date(null);
         }
 
@@ -209,9 +192,6 @@ public class AdminController {
         return "redirect:/admin/loans";
     }
 
-    // ==========================================
-    // MEMBERS MANAGEMENT
-    // ==========================================
     @GetMapping("/members")
     public String showMembers(Model model, Principal principal) {
         model.addAttribute("activeSection", "members");
@@ -235,7 +215,6 @@ public class AdminController {
 
     @GetMapping("/members/edit/{id}")
     public String editMember(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
-        // Change findByUsername to findById
         Optional<User> member = userRepository.findById(Integer.parseInt(id));
         if (member.isPresent()) {
             redirectAttributes.addFlashAttribute("memberForm", member.get());
@@ -249,7 +228,6 @@ public class AdminController {
                              @RequestParam(value = "isEdit", required = false) String isEdit, // Changed to String to safely handle HTML input value
                              RedirectAttributes redirectAttributes) {
         if ("true".equals(isEdit)) {
-            // Safe fallback fetch by ID to preserve original password if not altered
             Optional<User> existingUser = userRepository.findById(Integer.parseInt(member.getUser_id()));
             if(existingUser.isPresent()) {
                 member.setPassword(existingUser.get().getPassword());
@@ -272,11 +250,5 @@ public class AdminController {
             }
         }
         return "redirect:/admin/members";
-    }
-
-    @GetMapping("/settings")
-    public String showSettings(Model model) {
-        model.addAttribute("activeSection", "settings");
-        return "admin-settings";
     }
 }

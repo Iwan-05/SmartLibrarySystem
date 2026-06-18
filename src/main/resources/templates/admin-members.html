@@ -51,6 +51,7 @@
                     <table class="admin-table">
                         <thead>
                         <tr>
+                            <th>Member ID</th>
                             <th>Username</th>
                             <th>Role Tier</th>
                             <th>Actions</th>
@@ -58,12 +59,13 @@
                         </thead>
                         <tbody>
                         <tr th:each="member : ${allMembers}">
+                            <td th:text="${member.user_id}">B032110045</td>
                             <td th:text="${member.username}">Aisyah Rahman</td>
                             <td>
-                                <span class="status-pill"
-                                      th:classappend="${member.role == 'LIBRARIAN' ? 'available' : 'borrowed'}"
-                                      th:text="${member.role}">STUDENT
-                                </span>
+                <span class="status-pill"
+                      th:classappend="${member.role == 'LIBRARIAN' ? 'available' : 'borrowed'}"
+                      th:text="${member.role}">STUDENT
+                </span>
                             </td>
                             <td>
                                 <a th:href="@{/admin/members/edit/{id}(id=${member.user_id})}" class="action-icon-btn">Edit</a>
@@ -72,7 +74,7 @@
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(allMembers)}">
-                            <td colspan="3" style="text-align: center; color: var(--text-secondary);">No records found.</td>
+                            <td colspan="4" style="text-align: center; color: var(--text-secondary);">No records found.</td>
                         </tr>
                         </tbody>
                     </table>
