@@ -95,8 +95,8 @@
             </div>
 
             <div class="user-profile">
-                <strong>Admin</strong>
-                <div class="avatar admin-avatar"></div>
+                <strong th:text="${currentUser?.username != null ? currentUser.username : 'Admin'}">Admin</strong>
+                <div class="avatar"></div>
             </div>
         </header>
 

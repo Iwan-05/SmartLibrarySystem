@@ -88,12 +88,22 @@ public class AdminController {
     // BOOKS MANAGEMENT
     // ==========================================
     @GetMapping("/books")
-    public String showBooks(Model model) {
+    public String showBooks(Model model, Principal principal) {
         model.addAttribute("activeSection", "books");
         model.addAttribute("allBooks", bookRepository.findAll());
         if (!model.containsAttribute("bookForm")) {
             model.addAttribute("bookForm", new Book());
         }
+
+        if (principal != null && principal.getName() != null) {
+            User currentUser = userRepository.findByUsername(principal.getName());
+            model.addAttribute("currentUser", currentUser);
+        } else {
+            User guest = new User();
+            guest.setUsername("Guest Admin");
+            model.addAttribute("currentUser", guest);
+        }
+
         return "admin-books";
     }
 
@@ -128,7 +138,7 @@ public class AdminController {
     // LOANS MANAGEMENT
     // ==========================================
     @GetMapping("/loans")
-    public String showLoans(Model model) {
+    public String showLoans(Model model, Principal principal) {
         model.addAttribute("activeSection", "loans");
         model.addAttribute("allLoans", loanRepository.findAll());
         model.addAttribute("booksList", bookRepository.findAll());
@@ -137,6 +147,16 @@ public class AdminController {
         if (!model.containsAttribute("loanForm")) {
             model.addAttribute("loanForm", new Loan());
         }
+
+        if (principal != null && principal.getName() != null) {
+            User currentUser = userRepository.findByUsername(principal.getName());
+            model.addAttribute("currentUser", currentUser);
+        } else {
+            User guest = new User();
+            guest.setUsername("Guest Admin");
+            model.addAttribute("currentUser", guest);
+        }
+
         return "admin-loans";
     }
 
@@ -193,13 +213,23 @@ public class AdminController {
     // MEMBERS MANAGEMENT
     // ==========================================
     @GetMapping("/members")
-    public String showMembers(Model model) {
+    public String showMembers(Model model, Principal principal) {
         model.addAttribute("activeSection", "members");
         model.addAttribute("allMembers", userRepository.findAll());
 
         if (!model.containsAttribute("memberForm")) {
             model.addAttribute("memberForm", new User());
         }
+
+        if (principal != null && principal.getName() != null) {
+            User currentUser = userRepository.findByUsername(principal.getName());
+            model.addAttribute("currentUser", currentUser);
+        } else {
+            User guest = new User();
+            guest.setUsername("Guest Admin");
+            model.addAttribute("currentUser", guest);
+        }
+
         return "admin-members";
     }
 
