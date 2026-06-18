@@ -23,7 +23,11 @@
 
             <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
                 <a th:href="@{/profile}" class="nav-link">Profile</a>
-                <a th:href="@{/login}" class="nav-link">Log out</a>
+                <form th:action="@{/logout}" method="post" style="margin: 0;">
+                    <button type="submit" class="nav-link" style="width: 100%; text-align: left; background: transparent; border: none; cursor: pointer; font-family: inherit; font-size: inherit; color: inherit;">
+                        Log out
+                    </button>
+                </form>
             </div>
         </nav>
     </aside>
@@ -61,6 +65,7 @@
 
                         <form th:action="@{/returnBook}" method="post">
                             <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <input type="hidden" name="bookId" th:value="${loan.book.book_id}" />
                             <button type="submit" class="btn-return">Return Book</button>
                         </form>
                     </div>
