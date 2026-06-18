@@ -231,15 +231,22 @@ body {
 }
 
 .book-shelf {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 books per row */
-    gap: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px; /* Much tighter gap */
+    justify-content: flex-start; /* Forces them to pack cleanly to the left */
 }
 
 .book-card {
-    background-color: transparent;
-    transition: transform 0.3s ease;
-    cursor: pointer;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(200, 190, 180, 0.4);
+    border-radius: 16px;
+    padding: 15px;
+    width: 200px;              /* Force a strict width */
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    transition: transform 0.2s;
 }
 
 .book-card:hover {
@@ -248,47 +255,64 @@ body {
 
 .book-cover {
     width: 100%;
-    height: 320px;
-    background-color: #d9d9d9; /* Placeholder color before images load */
+    height: 240px;             /* Strict height */
+    object-fit: cover;         /* Crops the image perfectly instead of stretching it */
     border-radius: 8px;
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); /* Deep 3D shadow */
-    object-fit: cover;
+    background-color: #e8decc; /* Shows a nice cream box if the image is broken! */
+    margin-bottom: 15px;
 }
 
-/* --- CATEGORY FILTERS --- */
-.category-filters {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 30px;
-    /* Allows scrolling if there are too many categories */
-    overflow-x: auto;
-    padding-bottom: 10px;
+/* --- CATEGORY FILTERS --- */.category-filters {
+                                  display: flex;
+                                  gap: 12px;
+                                  overflow-x: auto;
+                                  padding-bottom: 12px;
+                                  margin-bottom: 25px;
+                                  scroll-behavior: smooth;
+                              }
+
+/* Beautiful, thin scrollbar for Webkit (Chrome/Safari/Edge) */
+.category-filters::-webkit-scrollbar {
+    height: 6px;
 }
+.category-filters::-webkit-scrollbar-track {
+    background: rgba(200, 190, 180, 0.2);
+    border-radius: 10px;
+}
+.category-filters::-webkit-scrollbar-thumb {
+    background: rgba(34, 34, 34, 0.3); /* Subtle dark grey */
+    border-radius: 10px;
+}
+.category-filters::-webkit-scrollbar-thumb:hover {
+    background: rgba(34, 34, 34, 0.6);
+}
+
 
 .filter-pill {
-    padding: 10px 24px;
-    border-radius: 30px;
-    background-color: var(--bg-panel);
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
-    font-weight: 600;
+    flex-shrink: 0;
+    padding: 8px 20px;
+    background: rgba(255, 255, 255, 0.5); /* Glassy background */
+    border: 1px solid rgba(200, 190, 180, 0.6);
+    border-radius: 30px; /* Perfect pill shape */
+    color: #555;
+    font-family: inherit;
     font-size: 0.9rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
-    white-space: nowrap;
+    transition: all 0.2s ease;
 }
 
 .filter-pill:hover {
-    border-color: var(--accent-color);
-    color: var(--accent-color);
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(130, 120, 110, 0.1);
 }
 
-/* The actively selected category */
 .filter-pill.active {
-    background-color: var(--accent-color);
-    color: #ffffff;
-    border-color: var(--accent-color);
-    box-shadow: 0 4px 10px rgba(32, 64, 53, 0.2);
+    background: var(--text-primary, #222); /* Sharp dark accent */
+    color: #fff;
+    border-color: var(--text-primary, #222);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
 /* =========================================
