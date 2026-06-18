@@ -2,41 +2,251 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library System - Login</title>
+    <title>THE BOOKS - Log in</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <style>
+        /* 1. Base Setup */
+        body.login-page {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #FAF8F5;
+            font-family: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 2. The Glassmorphism Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 40px rgba(130, 120, 110, 0.15);
+            border-radius: 24px;
+            padding: 50px 40px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+
+        /* 3. Typography & Icons */
+        .brand-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: var(--text-primary, #333);
+            color: white;
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            border-radius: 14px;
+            display: inline-block;
+        }
+        .glass-card h1 {
+            font-size: 1.8rem;
+            color: var(--text-primary, #222);
+            margin: 0 0 8px 0;
+        }
+        .glass-card p {
+            font-size: 0.95rem;
+            color: var(--text-secondary, #666);
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
+
+        /* 4. Inputs & Buttons */
+        .login-input {
+            width: 100%;
+            padding: 14px 16px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(200, 190, 180, 0.4);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        .login-input:focus {
+            outline: none;
+            border-color: var(--text-primary, #333);
+            background: #fff;
+        }
+
+        .btn-get-started {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--text-primary, #222);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            margin-top: 10px;
+        }
+        .btn-get-started:hover {
+            background-color: #000;
+            transform: translateY(-2px);
+        }
+
+        /* 5. Modern Role Toggle */
+        .role-toggle-modern {
+            display: flex;
+            background: rgba(200, 190, 180, 0.2);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            padding: 4px;
+            position: relative;
+        }
+        .role-toggle-modern input[type="radio"] {
+            display: none;
+        }
+        .role-toggle-modern label {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary, #666);
+            transition: all 0.3s ease;
+        }
+        .role-toggle-modern input[type="radio"]:checked + label {
+            background: white;
+            color: var(--text-primary, #222);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        /* 6. Footer Link */
+        .register-link {
+            margin-top: 25px;
+            font-size: 0.9rem;
+            color: var(--text-secondary, #666);
+        }
+        .register-link a {
+            color: var(--text-primary, #222);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
-<body>
 
-<div class="login-card">
-    <h2>System Access</h2>
+<body class="login-page">
 
-    <form th:action="@{/login}" method="POST">
+<canvas id="networkCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></canvas>
 
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required>
+<div class="glass-card">
+
+    <div class="brand-icon">📚</div>
+
+    <h1>Log in to THE BOOKS</h1>
+    <p>Your smart library management system. <br> Discover, borrow, and read.</p>
+
+    <div th:if="${param.error}" style="background-color: #fce8e6; color: #c5221f; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem;">
+        Invalid username or password.
+    </div>
+    <div th:if="${param.logout}" style="background-color: #e6f4ea; color: #137333; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem;">
+        You have been securely logged out.
+    </div>
+
+    <form th:action="@{/login}" method="post">
+        <input type="text" name="username" class="login-input" placeholder="Username" required autocomplete="username">
+        <input type="password" name="password" class="login-input" placeholder="Password" required autocomplete="current-password">
+
+        <div class="role-toggle-modern">
+            <input type="radio" id="roleStudent" name="role" value="STUDENT" checked>
+            <label for="roleStudent">Student</label>
+
+            <input type="radio" id="roleLibrarian" name="role" value="LIBRARIAN">
+            <label for="roleLibrarian">Librarian</label>
         </div>
 
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-
-        <div class="role-toggle">
-            <div class="radio-wrapper">
-                <input type="radio" id="roleStudent" name="role" value="STUDENT" checked>
-                <label for="roleStudent">Student</label>
-            </div>
-            <div class="radio-wrapper">
-                <input type="radio" id="roleLibrarian" name="role" value="LIBRARIAN">
-                <label for="roleLibrarian">Librarian</label>
-            </div>
-        </div>
-
-        <button type="submit" class="btn-primary">Authenticate</button>
+        <button type="submit" class="btn-get-started">Get Started</button>
     </form>
+
+    <div class="register-link">
+        Don't have an account? <a th:href="@{/register}">Register here</a>
+    </div>
+
 </div>
 
+<script>
+    const canvas = document.getElementById('networkCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
+
+    function init() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        particles = [];
+
+        // Middle ground: Not too crowded, not too empty
+        const particleCount = Math.floor((width * height) / 16000);
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                // Calm drift, but visible
+                vx: (Math.random() - 0.5) * 0.35,
+                vy: (Math.random() - 0.5) * 0.35,
+                radius: Math.random() * 2 + 0.8
+            });
+        }
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        ctx.clearRect(0, 0, width, height);
+
+        for (let i = 0; i < particles.length; i++) {
+            let p = particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+
+            if (p.x < 0 || p.x > width) p.vx *= -1;
+            if (p.y < 0 || p.y > height) p.vy *= -1;
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            // Bumping opacity up slightly so nodes are distinct
+            ctx.fillStyle = 'rgba(160, 150, 135, 0.6)';
+            ctx.fill();
+
+            for (let j = i + 1; j < particles.length; j++) {
+                let p2 = particles[j];
+                let dx = p.x - p2.x;
+                let dy = p.y - p2.y;
+                let dist = Math.sqrt(dx * dx + dy * dy);
+
+                // Reaching a bit further to create more visible connections
+                if (dist < 140) {
+                    ctx.beginPath();
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    // Lines are soft but distinctly visible when close
+                    ctx.strokeStyle = `rgba(160, 150, 135, ${(1 - dist / 140) * 0.5})`;
+                    ctx.lineWidth = 0.6;
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+
+    window.addEventListener('resize', init);
+    init();
+    animate();
+</script>
 </body>
 </html>

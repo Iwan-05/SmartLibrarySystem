@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -136,5 +137,18 @@ public class DashboardController {
         }
 
         return "redirect:/mylibrary";
+    }
+
+
+    @GetMapping("/")
+    public String homeRedirect(HttpServletRequest request) {
+        // Checks if the logged-in user has the LIBRARIAN role
+        if (request.isUserInRole("LIBRARIAN")) {
+            // Sends the admin to the root admin page (admin.html)
+            return "redirect:/admin";
+        }
+
+        // If student, send them to the regular dashboard
+        return "redirect:/dashboard";
     }
 }

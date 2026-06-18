@@ -11,4 +11,10 @@ public class LoginController {
         // This exact string must match the name of your HTML file (without the .html extension)
         return "login";
     }
+
+    // Routes the user to the new registration page
+    @GetMapping("/register")
+    public String showRegistrationForm() {
+        return "register";
+    }
 }
