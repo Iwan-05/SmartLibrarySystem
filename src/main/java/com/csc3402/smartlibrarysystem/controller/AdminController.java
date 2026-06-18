@@ -13,242 +13,116 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 
-    @Autowired UserRepository userRepository;
-    @Autowired BookRepository bookRepository;
-    @Autowired LoanRepository loanRepository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    BookRepository bookRepository;
+    @Autowired
+    LoanRepository loanRepository;
 
-    private double totalAvgValue = 0;
+    double totalAvgValue=0;
 
-    @GetMapping("")
-    public String showAdmin(Model model, Principal principal) {
-        totalAvgValue = 0;
-        model.addAttribute("activeSection", "dashboard");
 
-        if (principal != null && principal.getName() != null) {
-            User currentUser = userRepository.findByUsername(principal.getName());
-            model.addAttribute("currentUser", currentUser);
-        } else {
-            User guest = new User();
-            guest.setUsername("Guest Admin");
-            model.addAttribute("currentUser", guest);
-        }
 
-        List<Loan> activeLoans = loanRepository.findAllActiveLoansOrderByDueDate();
-        model.addAttribute("activeLoanCount", activeLoans != null ? activeLoans.size() : 0);
-
-        List<Book> totalBooks = bookRepository.findAll();
-        model.addAttribute("totalBook", totalBooks != null ? totalBooks.size() : 0);
-
-        List<User> totalMembers = userRepository.findAllByRole("STUDENT");
-        model.addAttribute("totalMember", totalMembers != null ? totalMembers.size() : 0);
-
-        if (totalBooks != null && !totalBooks.isEmpty()) {
-            for (Book book : totalBooks) {
-                totalAvgValue += book.getAvg_rating();
-            }
-            double avgValue = totalAvgValue / totalBooks.size();
-            model.addAttribute("avgBookRating", String.format("%.2f", avgValue));
-        } else {
-            model.addAttribute("avgBookRating", "0.00");
-        }
-
-        if (totalBooks != null && !totalBooks.isEmpty()) {
-            List<Book> recentBooks = totalBooks.size() > 3
-                    ? totalBooks.subList(totalBooks.size() - 3, totalBooks.size())
-                    : totalBooks;
-            model.addAttribute("recentBooks", recentBooks);
-        }
-
-        if (activeLoans != null && !activeLoans.isEmpty()) {
-            List<Loan> recentLoans = activeLoans.size() > 3
-                    ? activeLoans.subList(0, 3)
-                    : activeLoans;
-            model.addAttribute("recentLoans", recentLoans);
-        }
-
-        return "admin";
-    }
-
-    @GetMapping("/books")
-    public String showBooks(Model model, Principal principal) {
-        model.addAttribute("activeSection", "books");
-        model.addAttribute("allBooks", bookRepository.findAll());
-        if (!model.containsAttribute("bookForm")) {
-            model.addAttribute("bookForm", new Book());
-        }
-
-        if (principal != null && principal.getName() != null) {
-            User currentUser = userRepository.findByUsername(principal.getName());
-            model.addAttribute("currentUser", currentUser);
-        } else {
-            User guest = new User();
-            guest.setUsername("Guest Admin");
-            model.addAttribute("currentUser", guest);
-        }
-
-        return "admin-books";
-    }
-
-    @GetMapping("/books/edit/{id}")
-    public String editBook(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) { // Type changed to Long
-        Optional<Book> book = bookRepository.findById(id);
-        if (book.isPresent()) {
-            redirectAttributes.addFlashAttribute("bookForm", book.get());
-        }
-        return "redirect:/admin/books";
-    }
-
-    @PostMapping("/books/save")
-    public String saveOrUpdateBook(@ModelAttribute("bookForm") Book book, RedirectAttributes redirectAttributes) {
-        bookRepository.save(book);
-        redirectAttributes.addFlashAttribute("successMessage", "Book catalog updated!");
-        return "redirect:/admin/books";
-    }
-
-    @GetMapping("/books/delete/{id}")
-    public String deleteBook(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) { // Type changed to Long
-        try {
-            bookRepository.deleteById(id);
-            redirectAttributes.addFlashAttribute("successMessage", "Book record removed.");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("successMessage", "Cannot delete: book has active transactions.");
-        }
-        return "redirect:/admin/books";
-    }
 
     @GetMapping("/loans")
-    public String showLoans(Model model, Principal principal) {
+    public String showLoans(Model model) {
         model.addAttribute("activeSection", "loans");
-        model.addAttribute("allLoans", loanRepository.findAll());
-        model.addAttribute("booksList", bookRepository.findAll());
-        model.addAttribute("membersList", userRepository.findAll());
-
-        if (!model.containsAttribute("loanForm")) {
-            model.addAttribute("loanForm", new Loan());
-        }
-
-        if (principal != null && principal.getName() != null) {
-            User currentUser = userRepository.findByUsername(principal.getName());
-            model.addAttribute("currentUser", currentUser);
-        } else {
-            User guest = new User();
-            guest.setUsername("Guest Admin");
-            model.addAttribute("currentUser", guest);
-        }
-
         return "admin-loans";
     }
 
-    @GetMapping("/loans/edit/{id}")
-    public String editLoan(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) { // Type changed to Long
-        Optional<Loan> loan = loanRepository.findById(id);
-        if (loan.isPresent()) {
-            redirectAttributes.addFlashAttribute("loanForm", loan.get());
-        }
-        return "redirect:/admin/loans";
-    }
-
-    @PostMapping("/loans/save")
-    public String saveLoan(@ModelAttribute("loanForm") Loan loan,
-                           @RequestParam(value = "inputDueDate", required = false) String inputDueDate,
-                           @RequestParam("selectedStatus") String selectedStatus, // <-- Capture the dropdown value manually
-                           RedirectAttributes redirectAttributes) {
-
-        if (inputDueDate != null && !inputDueDate.isEmpty()) {
-            loan.setDue_date(LocalDate.parse(inputDueDate).atStartOfDay());
-        }
-
-        if (loan.getLoan_id() == null) {
-            loan.setBorrow_date(LocalDateTime.now());
-            loan.setFine_amount(0.0);
-        }
-
-        if ("Returned".equals(selectedStatus)) {
-            if (loan.getReturn_date() == null) {
-                loan.setReturn_date(LocalDateTime.now());
-            }
-        } else {
-            loan.setReturn_date(null);
-        }
-
-        loanRepository.save(loan);
-        redirectAttributes.addFlashAttribute("successMessage", "Loan log updated successfully!");
-        return "redirect:/admin/loans";
-    }
-
-    @GetMapping("/loans/delete/{id}")
-    public String deleteLoan(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) { // Type changed to Long
-        loanRepository.deleteById(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Loan file dropped.");
-        return "redirect:/admin/loans";
-    }
-
     @GetMapping("/members")
-    public String showMembers(Model model, Principal principal) {
+    public String showMembers(Model model) {
         model.addAttribute("activeSection", "members");
-        model.addAttribute("allMembers", userRepository.findAll());
-
-        if (!model.containsAttribute("memberForm")) {
-            model.addAttribute("memberForm", new User());
-        }
-
-        if (principal != null && principal.getName() != null) {
-            User currentUser = userRepository.findByUsername(principal.getName());
-            model.addAttribute("currentUser", currentUser);
-        } else {
-            User guest = new User();
-            guest.setUsername("Guest Admin");
-            model.addAttribute("currentUser", guest);
-        }
-
         return "admin-members";
     }
 
-    @GetMapping("/members/edit/{id}")
-    public String editMember(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
-        Optional<User> member = userRepository.findById(Integer.parseInt(id));
-        if (member.isPresent()) {
-            redirectAttributes.addFlashAttribute("memberForm", member.get());
-            redirectAttributes.addFlashAttribute("isEditMode", true);
+    @GetMapping("/settings")
+    public String showSettings(Model model) {
+        model.addAttribute("activeSection", "settings");
+        return "admin-settings";
+    }
+    @GetMapping("")
+    public String showAdmin(Model model, Principal principal) {
+        totalAvgValue=0;
+        User currentUser = userRepository.findByUsername(principal.getName()); //func nak tarik username ke dashbaord
+        model.addAttribute("currentUser", currentUser);
+
+        List<Loan> activeLoans = loanRepository.findAllActiveLoansOrderByDueDate();//to get total loan
+        model.addAttribute("activeLoanCount", activeLoans.size());
+
+        List<Book> totalBook = bookRepository.findAll();//total book available
+        model.addAttribute("totalBook", totalBook.size());
+
+        List<User> totalMember = userRepository.findAllByRole("STUDENT"); //total student available
+        model.addAttribute("totalMember", totalMember.size());
+
+        List<Book> avgBookRating = bookRepository.findAll();//avg rating
+        for(int i=0;i< avgBookRating.size();i++){
+            totalAvgValue+=avgBookRating.get(i).getAvg_rating();
         }
-        return "redirect:/admin/members";
+        double avgValue=totalAvgValue/avgBookRating.size();
+        model.addAttribute("avgBookRating", String.format("%.2f",avgValue));
+
+        List<Book> recentBooks = totalBook.size() > 3 //recent book punya
+                ? totalBook.subList(totalBook.size() - 3, totalBook.size())
+                : totalBook;
+        model.addAttribute("recentBooks", recentBooks);
+
+        List<Loan> allActiveLoans = loanRepository.findAllActiveLoansOrderByDueDate();
+
+        List<Loan> recentLoans = allActiveLoans.size() > 3
+                ? allActiveLoans.subList(0, 3)
+                : allActiveLoans;
+        model.addAttribute("recentLoans", recentLoans);
+        return "admin";
     }
 
-    @PostMapping("/members/save")
-    public String saveMember(@ModelAttribute("memberForm") User member,
-                             @RequestParam(value = "isEdit", required = false) String isEdit, // Changed to String to safely handle HTML input value
-                             RedirectAttributes redirectAttributes) {
-        if ("true".equals(isEdit)) {
-            Optional<User> existingUser = userRepository.findById(Integer.parseInt(member.getUser_id()));
-            if(existingUser.isPresent()) {
-                member.setPassword(existingUser.get().getPassword());
-            }
-        }
-        userRepository.save(member);
-        redirectAttributes.addFlashAttribute("successMessage", "Member profile saved.");
-        return "redirect:/admin/members";
+
+    // 1. Display the page with the list and an empty form
+    @GetMapping("/books") // Kept standard admin routing context
+    public String showBooksPage(Model model, Principal principal) {
+        model.addAttribute("allBooks", bookRepository.findAll());
+        model.addAttribute("bookForm", new Book());
+
+        User currentUser = userRepository.findByUsername(principal.getName()); //func nak tarik username ke dashbaord
+        model.addAttribute("currentUser", currentUser);
+
+        // FIXED: Changed from "admin" to "admin-books" to open the correct file!
+        return "admin-books";
     }
 
-    @GetMapping("/members/delete/{id}")
-    public String deleteMember(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
-        Optional<User> user = userRepository.findById(Integer.parseInt(id));
-        if(user.isPresent()) {
-            try {
-                userRepository.delete(user.get());
-                redirectAttributes.addFlashAttribute("successMessage", "User authorization revoked.");
-            } catch (Exception e) {
-                redirectAttributes.addFlashAttribute("successMessage", "Cannot drop member: user has outstanding active database associations.");
-            }
-        }
-        return "redirect:/admin/members";
+    // 2. Handle saving a new book OR updating an existing one
+    @PostMapping("/books/save")
+    public String saveBook(@ModelAttribute("bookForm") Book book, RedirectAttributes redirectAttributes) {
+        bookRepository.save(book);
+        redirectAttributes.addFlashAttribute("successMessage", "Book catalog registry updated successfully!");
+        return "redirect:/admin/books";
+    }
+
+    // 3. Handle clicking the "Edit" button
+    @GetMapping("/books/edit/{id}")
+    public String editBookForm(@PathVariable("id") Long id, Model model) {
+        Book existingBook = bookRepository.findById(id).orElse(new Book());
+
+        model.addAttribute("allBooks", bookRepository.findAll());
+        model.addAttribute("bookForm", existingBook);
+
+        // FIXED: Changed from "admin" to "admin-books" to stay on the correct screen while editing!
+        return "admin-books";
+    }
+
+    // 4. Handle clicking the "Del" button
+    @GetMapping("/books/delete/{id}")
+    public String deleteBook(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        bookRepository.deleteById(id);
+        redirectAttributes.addFlashAttribute("successMessage", "Book deleted successfully!");
+        return "redirect:/admin/books";
     }
 }
