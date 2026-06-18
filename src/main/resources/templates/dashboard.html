@@ -44,10 +44,11 @@
                        onkeyup="liveSearch()">
             </div>
 
-            <div class="user-profile">
-                <strong th:text="${currentUser.username}">Davis Workman</strong>
-                <div class="avatar"></div>
-            </div>
+            <a th:href="@{/profile}" class="profile-pill">
+                <strong th:text="${currentUser != null ? currentUser.username : 'Abu'}">Abu</strong>
+
+                <div class="avatar" th:style="'background-image: url(https://api.dicebear.com/7.x/avataaars/svg?seed=' + ${currentUser != null ? currentUser.username : 'Abu'} + ')'"></div>
+            </a>
         </header>
 
         <section>

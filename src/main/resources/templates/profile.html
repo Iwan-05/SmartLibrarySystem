@@ -38,16 +38,14 @@
                 <h1>My Profile</h1>
             </div>
             <div class="header-center"></div>
-            <div class="user-profile">
-                <strong th:text="${currentUser.username}">Davis Workman</strong>
-                <div class="avatar"></div>
-            </div>
         </header>
 
         <div class="profile-container">
 
             <div class="profile-header-card">
-                <div class="avatar-large"></div>
+
+                <div class="avatar-large" th:style="'background-image: url(https://api.dicebear.com/7.x/avataaars/svg?seed=' + ${currentUser != null ? currentUser.username : 'Abu'} + ')'"></div>
+
                 <div class="profile-details">
                     <h2 th:text="${currentUser != null ? currentUser.username : 'Davis Workman'}">Davis Workman</h2>
                     <p th:text="${currentUser != null ? currentUser.faculty : 'Faculty of Computer Science and Information Technology'}">Faculty of Computer Science and Information Technology</p>
