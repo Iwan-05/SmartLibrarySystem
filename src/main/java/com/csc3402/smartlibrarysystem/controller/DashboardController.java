@@ -128,12 +128,20 @@ public class DashboardController {
     }
 
     @PostMapping("/returnBook")
-    public String returnBook(@RequestParam("loanId") Long loanId) {
+    public String returnBook(@RequestParam("loanId") Long loanId,
+                             @RequestParam("bookId") Long bookId,
+                             Principal principal) {
         Loan loan = loanRepository.findById(loanId).orElse(null);
+        Book book = bookRepository.findById(bookId).orElse(null);
 
         if (loan != null) {
             loan.setReturn_date(LocalDateTime.now());
             loanRepository.save(loan);
+        }
+
+        if (book != null) {
+            book.setStatus("Available");
+            bookRepository.save(book);
         }
 
         return "redirect:/mylibrary";
@@ -149,6 +157,26 @@ public class DashboardController {
         }
 
         // If student, send them to the regular dashboard
+        return "redirect:/dashboard";
+    }
+
+    @PostMapping("/borrowBook")
+    public String borrowBook(@RequestParam("bookId") Long bookId, Principal principal) {
+        User currentUser = userRepository.findByUsername(principal.getName());
+        Book book = bookRepository.findById(bookId).orElse(null);
+
+        if (book != null && "Available".equals(book.getStatus())) {
+            Loan loan = new Loan();
+            loan.setUser_id(currentUser.getUser_id());
+            loan.setBorrow_date(LocalDateTime.now());
+            loan.setDue_date(LocalDateTime.now().plusDays(7));
+            loan.setBook(book);
+            loanRepository.save(loan);
+
+            book.setStatus("Borrowed");
+            bookRepository.save(book);
+        }
+
         return "redirect:/dashboard";
     }
 }

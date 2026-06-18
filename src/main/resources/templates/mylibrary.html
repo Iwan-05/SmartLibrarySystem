@@ -65,6 +65,7 @@
 
                         <form th:action="@{/returnBook}" method="post">
                             <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
+                            <input type="hidden" name="bookId" th:value="${loan.book.book_id}" />
                             <button type="submit" class="btn-return">Return Book</button>
                         </form>
                     </div>
