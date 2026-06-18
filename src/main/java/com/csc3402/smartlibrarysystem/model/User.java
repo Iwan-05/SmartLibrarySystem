@@ -19,6 +19,8 @@ public class User {
     private double fine;
     @Column(name="faculty")
     private String faculty;
+    @Column(name="access_status")
+    private String access_status = "PENDING"; // Sets the default in Java
 
     public User() {
     }
@@ -79,6 +81,9 @@ public class User {
     public void setFaculty(String faculty) {
         this.faculty = faculty;
     }
+    public String getAccess_status() { return access_status; }
+
+    public void setAccess_status(String access_status) { this.access_status = access_status; }
 
     @Override
     public String toString() {
