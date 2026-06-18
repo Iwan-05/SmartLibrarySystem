@@ -12,45 +12,116 @@
             gap: 15px;
             margin-bottom: 30px;
             flex-wrap: wrap;
+            position: relative;
+            z-index: 100;
         }
 
-        /* The Custom Dropdown Styling */
-        .custom-select-wrapper {
+        /* The Custom UI Dropdown System */
+        .custom-dropdown {
             position: relative;
+            width: 240px;
+            font-family: inherit;
         }
-        .premium-select {
-            appearance: none;
-            -webkit-appearance: none;
+
+        .dropdown-selected {
             background: rgba(255, 255, 255, 0.6);
             border: 1px solid rgba(200, 190, 180, 0.6);
             border-radius: 30px;
             padding: 9px 40px 9px 20px;
             color: #444;
-            font-family: inherit;
             font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
-            outline: none;
+            user-select: none;
             transition: all 0.2s ease;
+            position: relative;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        .premium-select:hover, .premium-select:focus {
+
+        .dropdown-selected:hover, .custom-dropdown.active .dropdown-selected {
             background: rgba(255, 255, 255, 0.9);
             border-color: #222;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         }
-        .select-icon {
+
+        .dropdown-selected::after {
+            content: '▼';
             position: absolute;
-            right: 15px;
+            right: 18px;
             top: 50%;
             transform: translateY(-50%);
-            pointer-events: none;
+            font-size: 0.7rem;
             color: #666;
-            font-size: 0.8rem;
+            transition: transform 0.3s;
         }
 
-        /* The Action Bar Search Input */
+        .custom-dropdown.active .dropdown-selected::after {
+            transform: translateY(-50%) rotate(180deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            width: 280px;
+            background: rgba(250, 248, 245, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(200, 190, 180, 0.4);
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 10px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 999;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .custom-dropdown.active .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* Custom Scrollbar for the Dropdown */
+        .dropdown-menu::-webkit-scrollbar { width: 6px; }
+        .dropdown-menu::-webkit-scrollbar-track { background: transparent; }
+        .dropdown-menu::-webkit-scrollbar-thumb { background: rgba(200, 190, 180, 0.6); border-radius: 10px; }
+        .dropdown-menu::-webkit-scrollbar-thumb:hover { background: rgba(34, 34, 34, 0.4); }
+
+        .dropdown-group-label {
+            padding: 12px 20px 4px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #999;
+            font-weight: 700;
+        }
+
+        .dropdown-item {
+            padding: 8px 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #444;
+            transition: background 0.2s, color 0.2s;
+            margin: 2px 8px;
+            border-radius: 8px;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(232, 222, 204, 0.5);
+            color: #222;
+            font-weight: 600;
+        }
+
+        /* Search Input */
         .premium-search {
-            margin-left: auto; /* Pushes the search bar to the far right */
+            margin-left: auto;
             width: 300px;
             background: rgba(255, 255, 255, 0.6);
             border: 1px solid rgba(200, 190, 180, 0.6);
@@ -100,9 +171,7 @@
             <div class="header-left">
                 <h1>Categories</h1>
             </div>
-
             <div class="header-center"></div>
-
             <div class="user-profile">
                 <strong th:text="${currentUser != null ? currentUser.username : 'Davis Workman'}">Davis Workman</strong>
                 <div class="avatar"></div>
@@ -113,40 +182,39 @@
 
             <button id="allBooksBtn" class="filter-pill active" onclick="resetToAllBooks()">All Books</button>
 
-            <div class="custom-select-wrapper">
-                <select id="genreSelect" class="premium-select" onchange="selectGenre()">
-                    <option value="" disabled selected>Select a Category...</option>
-                    <optgroup label="Tech & Science">
-                        <option value="Computers">Computer Science</option>
-                        <option value="Technology & Engineering">Tech & Engineering</option>
-                        <option value="Mathematics">Mathematics</option>
-                        <option value="Science">Science</option>
-                        <option value="Medical">Medical</option>
-                    </optgroup>
-                    <optgroup label="Fiction & Literature">
-                        <option value="Fiction">Fiction</option>
-                        <option value="Science Fiction">Science Fiction</option>
-                        <option value="Fantasy">Fantasy</option>
-                        <option value="Mystery & Thrillers">Mystery & Thriller</option>
-                        <option value="Horror">Horror</option>
-                        <option value="Romance">Romance</option>
-                        <option value="Comics & Graphic Novels">Graphic Novels</option>
-                    </optgroup>
-                    <optgroup label="Non-Fiction & Life">
-                        <option value="Non-Fiction">Non-Fiction</option>
-                        <option value="Business & Economics">Business & Finance</option>
-                        <option value="Biography & Autobiography">Biography</option>
-                        <option value="History">History</option>
-                        <option value="Law">Law</option>
-                        <option value="Philosophy">Philosophy</option>
-                        <option value="Psychology">Psychology</option>
-                        <option value="Art">Art & Design</option>
-                        <option value="Cooking">Cooking</option>
-                        <option value="Travel">Travel</option>
-                        <option value="Sports & Recreation">Sports</option>
-                    </optgroup>
-                </select>
-                <span class="select-icon">▼</span>
+            <div class="custom-dropdown" id="genreDropdown">
+                <div class="dropdown-selected" onclick="toggleDropdown()">Select a Category...</div>
+
+                <div class="dropdown-menu">
+                    <div class="dropdown-group-label">Tech & Science</div>
+                    <div class="dropdown-item" onclick="selectCustomGenre('Computers', 'Computer Science')">Computer Science</div>
+                    <div class="dropdown-item" onclick="selectCustomGenre('Technology & Engineering', 'Tech & Engineering')">Tech & Engineering</div>
+                    <div class="dropdown-item" onclick="selectCustomGenre('Mathematics', 'Mathematics')">Mathematics</div>
+                    <div class="dropdown-item" onclick="selectCustomGenre('Science', 'Science')">Science</div>
+                    <div class="dropdown-item" onclick="selectCustomGenre('Medical', 'Medical')">Medical</div>
+
+                    <div class="dropdown-group-label">Fiction & Literature</div>
+                    <div class="dropdown-item" onclick="selectCustomGenre('Fiction', 'Fiction')">Fiction</div>
+                    <div class="dropdown-item" onclick="selectCustomGenre('Science Fiction', 'Science Fiction')">Science Fiction</div>
+                    <div class="dropdown-item" onclick="selectCustomGenre('Fantasy', 'Fantasy')">Fantasy</div>
+                    <div class="dropdown-item" onclick="selectCustomGenre('Mystery & Thrillers', 'Mystery & Thriller')">Mystery & Thriller</div>
+                    <div class="dropdown-item" onclick="selectCustomGenre('Horror', 'Horror')">Horror</div>
+                    <div class="dropdown-item" onclick="selectCustomGenre('Romance', 'Romance')">Romance</div>
+                    <div class="dropdown-item" onclick="selectCustomGenre('Comics & Graphic Novels', 'Graphic Novels')">Graphic Novels</div>
+
+                    <div class="dropdown-group-label">Non-Fiction & Life</div>
+                    <div class="dropdown-item" onclick="selectCustomGenre('Non-Fiction', 'Non-Fiction')">Non-Fiction</div>
+                    <div class="dropdown-item" onclick="selectCustomGenre('Business & Economics', 'Business & Finance')">Business & Finance</div>
+                    <div class="dropdown-item" onclick="selectCustomGenre('Biography & Autobiography', 'Biography')">Biography</div>
+                    <div class="dropdown-item" onclick="selectCustomGenre('History', 'History')">History</div>
+                    <div class="dropdown-item" onclick="selectCustomGenre('Law', 'Law')">Law</div>
+                    <div class="dropdown-item" onclick="selectCustomGenre('Philosophy', 'Philosophy')">Philosophy</div>
+                    <div class="dropdown-item" onclick="selectCustomGenre('Psychology', 'Psychology')">Psychology</div>
+                    <div class="dropdown-item" onclick="selectCustomGenre('Art', 'Art & Design')">Art & Design</div>
+                    <div class="dropdown-item" onclick="selectCustomGenre('Cooking', 'Cooking')">Cooking</div>
+                    <div class="dropdown-item" onclick="selectCustomGenre('Travel', 'Travel')">Travel</div>
+                    <div class="dropdown-item" onclick="selectCustomGenre('Sports & Recreation', 'Sports')">Sports</div>
+                </div>
             </div>
 
             <input type="text"
@@ -189,20 +257,41 @@
         <script>
             let currentGenre = 'All Books';
 
+            // 1. Custom Dropdown Logic
+            function toggleDropdown() {
+                document.getElementById('genreDropdown').classList.toggle('active');
+            }
+
+            // Close dropdown if clicking anywhere else on the page
+            window.addEventListener('click', function(e) {
+                const dropdown = document.getElementById('genreDropdown');
+                if (!dropdown.contains(e.target)) {
+                    dropdown.classList.remove('active');
+                }
+            });
+
+            // 2. Selection Logic
+            function selectCustomGenre(dbValue, displayValue) {
+                // Update text
+                document.querySelector('.dropdown-selected').innerText = displayValue;
+
+                // Update active state
+                document.getElementById('allBooksBtn').classList.remove('active');
+                document.getElementById('genreDropdown').classList.remove('active');
+
+                // Fetch data
+                currentGenre = dbValue;
+                fetchFilteredBooks();
+            }
+
             function resetToAllBooks() {
                 document.getElementById('allBooksBtn').classList.add('active');
-                document.getElementById('genreSelect').value = ""; // Resets the dropdown
+                document.querySelector('.dropdown-selected').innerText = "Select a Category...";
                 currentGenre = 'All Books';
                 fetchFilteredBooks();
             }
 
-            function selectGenre() {
-                document.getElementById('allBooksBtn').classList.remove('active');
-                const select = document.getElementById('genreSelect');
-                currentGenre = select.options[select.selectedIndex].value;
-                fetchFilteredBooks();
-            }
-
+            // 3. Search & Fetch Logic
             function handleSearch() {
                 fetchFilteredBooks();
             }
@@ -317,13 +406,14 @@
         document.getElementById('bookDetailsModal').style.display = 'none';
     }
 
-    // Click outside to close
-    window.onclick = function(event) {
+    // Modal click-outside-to-close logic
+    window.addEventListener('click', function(event) {
         const modal = document.getElementById('bookDetailsModal');
+        // Make sure we only close if they clicked the overlay, NOT the dropdown
         if (event.target === modal) {
             closeDetailsModal();
         }
-    }
+    });
 </script>
 
 </body>
