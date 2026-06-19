@@ -2,12 +2,14 @@ package com.csc3402.smartlibrarysystem.controller;
 
 import com.csc3402.smartlibrarysystem.model.User;
 import com.csc3402.smartlibrarysystem.repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class LoginController {
@@ -15,18 +17,54 @@ public class LoginController {
     @Autowired
     UserRepository userRepository;
 
+    // Shows the actual login page
     @GetMapping("/login")
     public String showLoginPage() {
-        // This exact string must match the name of your HTML file (without the .html extension)
         return "login";
     }
 
+    // --- THE FIXED LOGIN PROCESSOR ---
+    // Uses /process-login so Spring Security doesn't hijack it!
+    @PostMapping("/process-login")
+    public String processLogin(@RequestParam String username,
+                               @RequestParam String password,
+                               @RequestParam String role,
+                               RedirectAttributes redirectAttributes,
+                               HttpSession session) {
+
+        System.out.println("--- LOGIN ATTEMPT ---");
+        System.out.println("User entered: " + username);
+        System.out.println("Role selected: " + role);
+
+        User user = userRepository.findByUsername(username);
+
+        // 1. Check if user exists and password matches
+        if (user == null || !user.getPassword().equals(password)) {
+            System.out.println("Result: Wrong password or user not found.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Invalid username or password.");
+            return "redirect:/login";
+        }
+
+        // 2. Check if the selected role matches the database role
+        if (!user.getRole().equalsIgnoreCase(role)) {
+            System.out.println("Result: Wrong role! DB Role is: " + user.getRole());
+            redirectAttributes.addFlashAttribute("errorMessage", "Oh no, wrong role! Please select your actual account role.");
+            return "redirect:/login";
+        }
+
+        // 3. Success! Set session and redirect to dashboard
+        System.out.println("Result: SUCCESS! Logging in...");
+        session.setAttribute("currentUser", user);
+        return "redirect:/dashboard";
+    }
+
+    // Shows the registration page
     @GetMapping("/register")
     public String showRegistrationForm() {
         return "register";
     }
 
-    // Routes the user to the new registration page
+    // Processes new user registration
     @PostMapping("/register")
     public String registerUser(@RequestParam String username,
                                @RequestParam String password,
