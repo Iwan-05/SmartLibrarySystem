@@ -2,9 +2,11 @@ package com.csc3402.smartlibrarysystem.controller;
 
 import com.csc3402.smartlibrarysystem.model.Book;
 import com.csc3402.smartlibrarysystem.model.Loan;
+import com.csc3402.smartlibrarysystem.model.Rating;
 import com.csc3402.smartlibrarysystem.model.User;
 import com.csc3402.smartlibrarysystem.repository.BookRepository;
 import com.csc3402.smartlibrarysystem.repository.LoanRepository;
+import com.csc3402.smartlibrarysystem.repository.RatingRepository;
 import com.csc3402.smartlibrarysystem.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,6 +32,9 @@ public class DashboardController {
 
     @Autowired
     private LoanRepository loanRepository;
+
+    @Autowired
+    private RatingRepository ratingRepository;
 
     @GetMapping("/dashboard")
     public String showDashboard(@RequestParam(name = "search", required = false) String search,
@@ -130,9 +135,12 @@ public class DashboardController {
     @PostMapping("/returnBook")
     public String returnBook(@RequestParam("loanId") Long loanId,
                              @RequestParam("bookId") Long bookId,
+                             @RequestParam(name = "ratingScore", required = false, defaultValue = "0") double ratingScore,
                              Principal principal) {
+
         Loan loan = loanRepository.findById(loanId).orElse(null);
         Book book = bookRepository.findById(bookId).orElse(null);
+        User currentUser = userRepository.findByUsername(principal.getName());
 
         if (loan != null) {
             loan.setReturn_date(LocalDateTime.now());
@@ -141,6 +149,33 @@ public class DashboardController {
 
         if (book != null) {
             book.setStatus("Available");
+
+            if (ratingScore > 0) {
+                Rating rating = new Rating();
+                rating.setStar_score(ratingScore);
+                rating.setUser(currentUser);
+                rating.setBook(book);
+                ratingRepository.save(rating);
+
+                Double sum = ratingRepository.findSumByBookId(bookId);
+                Long count = ratingRepository.findCountByBookId(bookId);
+
+                if (sum != null && count != null && count > 0) {
+                    double initialRating = book.getAvg_rating();
+
+                    double weightedAvg;
+                    if (initialRating > 0) {
+                        // Include the seeded initial rating as one extra vote
+                        weightedAvg = (sum + initialRating) / (count + 1);
+                    } else {
+                        // No initial rating, just average the new ratings normally
+                        weightedAvg = sum / count;
+                    }
+
+                    book.setAvg_rating(weightedAvg);
+                }
+            }
+
             bookRepository.save(book);
         }
 

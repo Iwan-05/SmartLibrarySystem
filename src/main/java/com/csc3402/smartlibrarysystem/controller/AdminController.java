@@ -45,9 +45,59 @@ public class AdminController {
     }
 
     @GetMapping("/members")
-    public String showMembers(Model model) {
+    public String showMembers(Model model, Principal principal) {
         model.addAttribute("activeSection", "members");
+
+        User currentUser = userRepository.findByUsername(principal.getName());
+        model.addAttribute("currentUser", currentUser);
+
+        model.addAttribute("allMembers", userRepository.findAll());
+        model.addAttribute("memberForm", new User());
+        model.addAttribute("isEditMode", false);
+
         return "admin-members";
+    }
+
+    @PostMapping("/members/save")
+    public String saveMember(@ModelAttribute("memberForm") User memberForm,
+                             @RequestParam(name = "isEdit", defaultValue = "false") boolean isEdit,
+                             RedirectAttributes redirectAttributes) {
+        if (isEdit) {
+            User existing = userRepository.findById(memberForm.getUser_id()).orElse(null);
+            if (existing != null) {
+                existing.setUsername(memberForm.getUsername());
+                existing.setRole(memberForm.getRole());
+                existing.setFaculty(memberForm.getFaculty());
+                userRepository.save(existing);
+            }
+        } else {
+            memberForm.setPassword(memberForm.getPassword());
+            memberForm.setFine(0.0);
+            userRepository.save(memberForm);
+        }
+        redirectAttributes.addFlashAttribute("successMessage", "Member updated successfully!");
+        return "redirect:/admin/members";
+    }
+
+    @GetMapping("/members/edit/{id}")
+    public String editMember(@PathVariable("id") String id, Model model, Principal principal) {
+        User existing = userRepository.findById(id).orElse(new User());
+
+        User currentUser = userRepository.findByUsername(principal.getName());
+        model.addAttribute("currentUser", currentUser);
+
+        model.addAttribute("allMembers", userRepository.findAll());
+        model.addAttribute("memberForm", existing);
+        model.addAttribute("isEditMode", true);
+
+        return "admin-members";
+    }
+
+    @GetMapping("/members/delete/{id}")
+    public String deleteMember(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
+        userRepository.deleteById(id);
+        redirectAttributes.addFlashAttribute("successMessage", "Member deleted successfully!");
+        return "redirect:/admin/members";
     }
 
     @GetMapping("/settings")
