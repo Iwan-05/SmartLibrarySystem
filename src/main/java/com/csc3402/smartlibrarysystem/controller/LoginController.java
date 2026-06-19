@@ -10,6 +10,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import java.util.Collections;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import java.util.Collections;
 
 @Controller
 public class LoginController {
@@ -30,7 +42,9 @@ public class LoginController {
                                @RequestParam String password,
                                @RequestParam String role,
                                RedirectAttributes redirectAttributes,
-                               HttpSession session) {
+                               HttpSession session,
+                               HttpServletRequest request,
+                               HttpServletResponse response) {
 
         System.out.println("--- LOGIN ATTEMPT ---");
         System.out.println("User entered: " + username);
@@ -52,11 +66,38 @@ public class LoginController {
             return "redirect:/login";
         }
 
-        // 3. Success! Set session and redirect to dashboard
-        System.out.println("Result: SUCCESS! Logging in...");
+        // 3. SUCCESS!
+        System.out.println("Result: SUCCESS! Logging into Spring Security...");
+
+        // Create the official token
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                user.getUsername(),
+                user.getPassword(),
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().toUpperCase()))
+        );
+
+        // Create an empty context and set our token
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authToken);
+        SecurityContextHolder.setContext(context);
+
+        // CRITICAL SPRING SECURITY 6 FIX: Explicitly save the context to the session!
+        HttpSessionSecurityContextRepository repository = new HttpSessionSecurityContextRepository();
+        repository.saveContext(context, request, response);
+
+        // Keep your manual session attribute for Thymeleaf
         session.setAttribute("currentUser", user);
-        return "redirect:/dashboard";
+
+        // --- NEW TRAFFIC COP: ROUTE BASED ON ROLE ---
+        if ("LIBRARIAN".equalsIgnoreCase(user.getRole())) {
+            System.out.println("Routing to Librarian Dashboard...");
+            return "redirect:/admin"; // Change this to your actual librarian URL!
+        } else {
+            System.out.println("Routing to Student Dashboard...");
+            return "redirect:/dashboard";
+        }
     }
+
 
     // Shows the registration page
     @GetMapping("/register")
