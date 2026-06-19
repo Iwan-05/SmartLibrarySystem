@@ -10,6 +10,12 @@
     <aside class="sidebar">
         <div class="brand-logo">THE BOOKS</div>
 
+        <script>
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+        </script>
+
         <nav class="nav-menu">
             <a th:href="@{/dashboard}" class="nav-link active">Discover</a>
             <a th:href="@{/category}" class="nav-link">Category</a>
