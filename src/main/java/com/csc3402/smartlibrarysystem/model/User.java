@@ -1,99 +1,92 @@
 package com.csc3402.smartlibrarysystem.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
+import java.util.Set;
 
 @Entity
-@Table(name = "Users")
+@Table(name = "users")
 public class User {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="user_id")
-    private String user_id;
+    @Column(name="matric_id", length = 8)
+    @Pattern(regexp = "^[0-9]{6}$|^BC[0-9]{6}$", message = "Matric ID must be exactly 6 digits, or 'BC' followed by 6 digits.")
+    private String matric_id;
+
     @Column(name="username")
     private String username;
+
     @Column(name="password")
     private String password;
+
     @Column(name="role")
     private String role;
+
     @Column(name="fine")
     private double fine;
+
     @Column(name="faculty")
     private String faculty;
+
     @Column(name="access_status")
-    private String access_status = "PENDING"; // Sets the default in Java
+    private String access_status = "ACTIVE";
+
+    // Relationship: One User has Many Loans
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Loan> loans;
+
+    // Relationship: One User has Many Ratings
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Rating> ratings;
 
     public User() {
     }
 
-    public User(String user_id, String username, String password, String role, double fine, String faculty) {
-        this.user_id = user_id;
+    public User(String matric_id, String username, String password, String role, double fine, String faculty, String access_status) {
+        this.matric_id = matric_id;
         this.username = username;
         this.password = password;
         this.role = role;
         this.fine = fine;
         this.faculty = faculty;
+        this.access_status = access_status;
     }
 
-    public String getUser_id() {
-        return user_id;
-    }
+    public String getMatric_id() { return matric_id; }
+    public void setMatric_id(String matric_id) { this.matric_id = matric_id; }
 
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
-    }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
-    public String getUsername() {
-        return username;
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 
-    public String getPassword() {
-        return password;
-    }
+    public double getFine() { return fine; }
+    public void setFine(double fine) { this.fine = fine; }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public String getFaculty() { return faculty; }
+    public void setFaculty(String faculty) { this.faculty = faculty; }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public double getFine() {
-        return fine;
-    }
-
-    public void setFine(double fine) {
-        this.fine = fine;
-    }
-
-    public String getFaculty() {
-        return faculty;
-    }
-
-    public void setFaculty(String faculty) {
-        this.faculty = faculty;
-    }
     public String getAccess_status() { return access_status; }
-
     public void setAccess_status(String access_status) { this.access_status = access_status; }
+
+    public Set<Loan> getLoans() { return loans; }
+    public void setLoans(Set<Loan> loans) { this.loans = loans; }
+
+    public Set<Rating> getRatings() { return ratings; }
+    public void setRatings(Set<Rating> ratings) { this.ratings = ratings; }
 
     @Override
     public String toString() {
         return "User{" +
-                "user_id='" + user_id + '\'' +
+                "matric_id='" + matric_id + '\'' +
                 ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
                 ", role='" + role + '\'' +
-                ", fine=" + fine +
                 ", faculty='" + faculty + '\'' +
+                ", access_status='" + access_status + '\'' +
                 '}';
     }
 }

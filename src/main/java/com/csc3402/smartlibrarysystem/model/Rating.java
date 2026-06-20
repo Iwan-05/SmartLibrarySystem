@@ -14,9 +14,9 @@ public class Rating {
     @Column(name="star_score")
     private double star_score;
 
-    // Foreign Key mapping to User
+    // Foreign Key mapping to User via matric_id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "matric_id", nullable = false)
     private User user;
 
     // Foreign Key mapping to Book
@@ -43,12 +43,4 @@ public class Rating {
     public void setUser(User user) { this.user = user; }
     public Book getBook() { return book; }
     public void setBook(Book book) { this.book = book; }
-
-    @Override
-    public String toString() {
-        return "Rating{" +
-                "rating_id=" + rating_id +
-                ", star_score=" + star_score +
-                '}';
-    }
 }
