@@ -15,4 +15,7 @@ public interface UserRepository extends JpaRepository<User,String>    {
 
     @Query("SELECT u FROM User u WHERE u.access_status = :status")
     List<User> findByAccess_status(@Param("status") String status);
+
+    @Query("SELECT u FROM User u WHERE LOWER(u.username) LIKE LOWER(CONCAT('%', :query, '%')) OR LOWER(u.matric_id) LIKE LOWER(CONCAT('%', :query, '%'))")
+    List<User> searchMembers(@Param("query") String query);
 }

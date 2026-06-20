@@ -9,10 +9,10 @@ import java.util.List;
 
 @Repository
 public interface LoanRepository extends JpaRepository<Loan, Long>    {
-    @Query("SELECT l FROM Loan l WHERE l.user_id = :userId AND l.return_date IS NULL")
+    @Query("SELECT l FROM Loan l WHERE l.user.matric_id = :userId AND l.return_date IS NULL")
     List<Loan> findActiveLoansByUserId(@Param("userId") String userId);
 
-    @Query("SELECT l FROM Loan l WHERE l.user_id = :userId AND l.return_date IS NOT NULL")
+    @Query("SELECT l FROM Loan l WHERE l.user.matric_id = :userId AND l.return_date IS NOT NULL")
     List<Loan> findPastLoansByUserId(@Param("userId") String userId);
 
     @Query("SELECT l FROM Loan l WHERE l.return_date IS NULL ORDER BY l.due_date ASC")
@@ -25,6 +25,6 @@ public interface LoanRepository extends JpaRepository<Loan, Long>    {
     List<Loan> findAllOrderedByDate();
 
     @Query("SELECT l FROM Loan l WHERE LOWER(l.book.title) LIKE LOWER(CONCAT('%', :query, '%')) " +
-            "OR LOWER(l.user_id) LIKE LOWER(CONCAT('%', :query, '%')) ORDER BY l.borrow_date DESC")
+            "OR LOWER(l.user.matric_id) LIKE LOWER(CONCAT('%', :query, '%')) ORDER BY l.borrow_date DESC")
     List<Loan> searchLoans(@Param("query") String query);
 }

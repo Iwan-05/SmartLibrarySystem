@@ -67,6 +67,11 @@
         </header>
 
         <section>
+            <div th:if="${currentUser != null && currentUser.fine > 0}"
+                 style="background-color: #fce8e6; color: #c5221f; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-weight: 600;">
+                You have an outstanding fine of RM <span th:text="${#numbers.formatDecimal(currentUser.fine, 1, 2)}">0.00</span>.
+                Please settle it at the library before borrowing.
+            </div>
             <h2 class="section-title">Book Recommendation</h2>
 
             <div class="book-shelf">

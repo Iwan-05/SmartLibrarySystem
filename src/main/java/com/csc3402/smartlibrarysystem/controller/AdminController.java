@@ -76,7 +76,7 @@ public class AdminController {
         }
 
         loan.setBook(book);
-        loan.setUser_id(member.getUser_id());
+        loan.setUser(member);
         loan.setDue_date(LocalDate.parse(inputDueDate).atStartOfDay()); // adjust if due_date is LocalDate
 
         if ("Returned".equals(selectedStatus)) {
@@ -171,7 +171,7 @@ public class AdminController {
                              @RequestParam(name = "isEdit", defaultValue = "false") boolean isEdit,
                              RedirectAttributes redirectAttributes) {
         if (isEdit) {
-            User existing = userRepository.findById(memberForm.getUser_id()).orElse(null);
+            User existing = userRepository.findById(memberForm.getMatric_id()).orElse(null);
             if (existing != null) {
                 existing.setUsername(memberForm.getUsername());
                 existing.setRole(memberForm.getRole());
@@ -200,11 +200,33 @@ public class AdminController {
 
         return "admin-members";
     }
+    @GetMapping("/members/search")
+    public String searchMembersLive(@RequestParam(value = "query", required = false) String query, Model model) {
+        List<User> results;
+        if (query == null || query.trim().isEmpty()) {
+            results = userRepository.findAll();
+        } else {
+            results = userRepository.searchMembers(query.trim());
+        }
+        model.addAttribute("allMembers", results);
+        return "admin-members :: memberRows";
+    }
 
     @GetMapping("/members/delete/{id}")
     public String deleteMember(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
         userRepository.deleteById(id);
         redirectAttributes.addFlashAttribute("successMessage", "Member deleted successfully!");
+        return "redirect:/admin/members";
+    }
+
+    @PostMapping("/members/clear-fine/{id}")
+    public String clearFine(@PathVariable("id") String matricId, RedirectAttributes redirectAttributes) {
+        User user = userRepository.findById(matricId).orElse(null);
+        if (user != null) {
+            user.setFine(0.0);
+            userRepository.save(user);
+            redirectAttributes.addFlashAttribute("successMessage", "Fine cleared for " + user.getUsername());
+        }
         return "redirect:/admin/members";
     }
 

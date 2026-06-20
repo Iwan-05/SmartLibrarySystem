@@ -28,7 +28,7 @@
                 <p class="header-subtitle">Manage user system accesses, authorizations, and credentials.</p>
             </div>
             <div class="header-center">
-                <input type="text" class="header-search" placeholder="Search accounts...">
+                <input type="text" id="memberSearchBox" class="header-search" placeholder="Search accounts..." onkeyup="liveSearchMembers()">
             </div>
             <div class="user-profile">
                 <strong th:text="${currentUser?.username != null ? currentUser.username : 'Admin'}">Admin</strong>
@@ -51,30 +51,42 @@
                     <table class="admin-table">
                         <thead>
                         <tr>
-                            <th>Member ID</th>
+                            <th>Matric ID</th>
                             <th>Username</th>
                             <th>Role Tier</th>
+                            <th>Fine</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="memberTableBody" th:fragment="memberRows">
                         <tr th:each="member : ${allMembers}">
-                            <td th:text="${member.user_id}">B032110045</td>
+                            <td th:text="${member.matric_id}">B032110045</td>
                             <td th:text="${member.username}">Aisyah Rahman</td>
                             <td>
-                <span class="status-pill"
-                      th:classappend="${member.role == 'LIBRARIAN' ? 'available' : 'borrowed'}"
-                      th:text="${member.role}">STUDENT
-                </span>
+            <span class="status-pill"
+                  th:classappend="${member.role == 'LIBRARIAN' ? 'available' : 'borrowed'}"
+                  th:text="${member.role}">STUDENT
+            </span>
                             </td>
                             <td>
-                                <a th:href="@{/admin/members/edit/{id}(id=${member.user_id})}" class="action-icon-btn">Edit</a>
-                                <a th:href="@{/admin/members/delete/{id}(id=${member.user_id})}" class="action-icon-btn delete"
+            <span th:if="${member.fine > 0}" style="color: #c5221f; font-weight: 700;"
+                  th:text="'RM ' + ${#numbers.formatDecimal(member.fine, 1, 2)}">RM 0.00</span>
+                                <span th:if="${member.fine == 0}" style="color: var(--text-secondary);">RM 0.00</span>
+                            </td>
+                            <td>
+                                <a th:href="@{/admin/members/edit/{id}(id=${member.matric_id})}" class="action-icon-btn">Edit</a>
+                                <a th:href="@{/admin/members/delete/{id}(id=${member.matric_id})}" class="action-icon-btn delete"
                                    onclick="return confirm('Revoke member account?');">Del</a>
+                                <form th:if="${member.fine > 0}"
+                                      th:action="@{/admin/members/clear-fine/{id}(id=${member.matric_id})}"
+                                      method="post" style="display:inline;">
+                                    <button type="submit" class="action-icon-btn"
+                                            onclick="return confirm('Mark fine as paid?');">Clear Fine</button>
+                                </form>
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(allMembers)}">
-                            <td colspan="4" style="text-align: center; color: var(--text-secondary);">No records found.</td>
+                            <td colspan="5" style="text-align: center; color: var(--text-secondary);">No records found.</td>
                         </tr>
                         </tbody>
                     </table>
@@ -93,8 +105,8 @@
                     <input type="hidden" name="isEdit" th:value="${isEditMode == true} ? 'true' : 'false'" />
 
                     <div class="form-group">
-                        <label for="uid">Member User ID (Matric No / ID)</label>
-                        <input type="text" id="uid" th:field="*{user_id}" class="form-control"
+                        <label for="uid">Matric ID (Matric No / ID)</label>
+                        <input type="text" id="uid" th:field="*{matric_id}" class="form-control"
                                th:readonly="${isEditMode == true}" required placeholder="e.g. B032110045" />
                     </div>
 
@@ -129,5 +141,23 @@
         </section>
     </main>
 </div>
+<script>
+    function liveSearchMembers() {
+        const query = document.getElementById('memberSearchBox').value;
+
+        fetch('/admin/members/search?query=' + encodeURIComponent(query))
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                // Wrap in <table> so the browser correctly parses <tbody>/<tr> tags
+                const doc = parser.parseFromString('<table>' + html + '</table>', 'text/html');
+                const newTbody = doc.querySelector('tbody');
+                if (newTbody) {
+                    document.getElementById('memberTableBody').innerHTML = newTbody.innerHTML;
+                }
+            })
+            .catch(error => console.error("Error performing member search:", error));
+    }
+</script>
 </body>
 </html>

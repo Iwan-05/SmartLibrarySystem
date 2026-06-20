@@ -12,6 +12,16 @@ public class Loan {
     @Column(name="loan_id")
     private Long loan_id;
 
+    // Foreign Key mapping to User via matric_id
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "matric_id", nullable = false)
+    private User user;
+
+    // Foreign Key mapping to Book
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id", nullable = false)
+    private Book book;
+
     @Column(name="borrow_date")
     private LocalDateTime borrow_date;
 
@@ -24,15 +34,6 @@ public class Loan {
     @Column(name="fine_amount")
     private double fine_amount;
 
-    // Foreign Key mapping to User via matric_id
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "matric_id", nullable = false)
-    private User user;
-
-    // Foreign Key mapping to Book
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_id", nullable = false)
-    private Book book;
 
     public Loan() {
     }

@@ -98,7 +98,7 @@
                         <tbody id="loansTableBody" th:fragment="loanRows">
                         <tr th:each="loan : ${allLoans}">
                             <td th:text="${loan.book != null ? loan.book.title : 'Unknown Book'}">Clean Code</td>
-                            <td th:text="${loan.user_id}">B032110045</td>
+                            <td th:text="${loan.user.matric_id}">B032110045</td>
                             <td th:text="${loan.due_date != null ? #temporals.format(loan.due_date, 'dd MMM yyyy') : '-'}">15 Aug 2026</td>
                             <td>
             <span class="status-pill"
@@ -139,7 +139,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="loanUser">Member ID</label>
+                        <label for="loanUser">Matric ID</label>
                         <input type="text" id="loanUser" name="memberId" class="form-control" required
                                placeholder="Type the member ID..." />
                     </div>

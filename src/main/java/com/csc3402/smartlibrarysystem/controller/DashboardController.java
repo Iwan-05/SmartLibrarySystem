@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -115,7 +116,7 @@ public class DashboardController {
         User currentUser = userRepository.findByUsername(principal.getName()); //func nak tarik username ke dashbaord
         model.addAttribute("currentUser", currentUser);
 
-        List<Loan> activeLoans = loanRepository.findActiveLoansByUserId(currentUser.getUser_id());
+        List<Loan> activeLoans = loanRepository.findActiveLoansByUserId(currentUser.getMatric_id());
         model.addAttribute("loans", activeLoans);
         return "mylibrary";
     }
@@ -125,9 +126,9 @@ public class DashboardController {
         User currentUser = userRepository.findByUsername(principal.getName()); //func nak tarik username ke dashbaord
         model.addAttribute("currentUser", currentUser);
 
-        List<Loan> activeLoans = loanRepository.findActiveLoansByUserId(currentUser.getUser_id());
+        List<Loan> activeLoans = loanRepository.findActiveLoansByUserId(currentUser.getMatric_id());
         model.addAttribute("activeLoanCount", activeLoans.size());
-        List<Loan> pastLoans = loanRepository.findPastLoansByUserId(currentUser.getUser_id());
+        List<Loan> pastLoans = loanRepository.findPastLoansByUserId(currentUser.getMatric_id());
         model.addAttribute("pastLoanCount", pastLoans.size());
        return "profile";
     }
@@ -137,13 +138,26 @@ public class DashboardController {
                              @RequestParam("bookId") Long bookId,
                              @RequestParam(name = "ratingScore", required = false, defaultValue = "0") double ratingScore,
                              Principal principal) {
-
         Loan loan = loanRepository.findById(loanId).orElse(null);
         Book book = bookRepository.findById(bookId).orElse(null);
         User currentUser = userRepository.findByUsername(principal.getName());
 
         if (loan != null) {
-            loan.setReturn_date(LocalDateTime.now());
+            LocalDateTime now = LocalDateTime.now();
+            loan.setReturn_date(now);
+
+            if (now.isAfter(loan.getDue_date())) {
+                long daysLate = java.time.Duration.between(loan.getDue_date(), now).toDays();
+                if (daysLate < 1) daysLate = 1; // any lateness within the same day still counts as 1 day late
+
+                double fine = daysLate * 2.0;
+                loan.setFine_amount(fine);
+
+                User loanOwner = loan.getUser();
+                loanOwner.setFine(loanOwner.getFine() + fine);
+                userRepository.save(loanOwner);
+            }
+
             loanRepository.save(loan);
         }
 
@@ -165,10 +179,8 @@ public class DashboardController {
 
                     double weightedAvg;
                     if (initialRating > 0) {
-                        // Include the seeded initial rating as one extra vote
                         weightedAvg = (sum + initialRating) / (count + 1);
                     } else {
-                        // No initial rating, just average the new ratings normally
                         weightedAvg = sum / count;
                     }
 
@@ -196,25 +208,23 @@ public class DashboardController {
     }
 
     @PostMapping("/borrowBook")
-    public String borrowBook(@RequestParam("bookId") Long bookId, Principal principal) {
+    public String borrowBook(@RequestParam("bookId") Long bookId, Principal principal, RedirectAttributes redirectAttributes) {
         User currentUser = userRepository.findByUsername(principal.getName());
         Book book = bookRepository.findById(bookId).orElse(null);
 
-        // 1. Check if the book exists and is actually Available
-        if (book != null && "Available".equalsIgnoreCase(book.getStatus())) {
+        if (currentUser.getFine() > 0) {
+            redirectAttributes.addFlashAttribute("errorMessage", "You have an outstanding fine of RM " + currentUser.getFine() + ". Please settle it at the library before borrowing.");
+            return "redirect:/dashboard";
+        }
 
-            // 2. Update and save the BOOK FIRST to prevent Hibernate conflict
+        if (book != null && "Available".equals(book.getStatus())) {
+            Loan loan = new Loan();
+            loan.setUser(currentUser);
+            loan.setBook(book);
+            loanRepository.save(loan);
+
             book.setStatus("Borrowed");
             bookRepository.save(book);
-
-            // 3. Create and save the LOAN SECOND
-            Loan loan = new Loan();
-            loan.setUser_id(String.valueOf(currentUser.getUser_id())); // Converted to String since your loan model uses String for user_id
-            loan.setBorrow_date(LocalDateTime.now());
-            loan.setDue_date(LocalDateTime.now().plusDays(7));
-            loan.setBook(book); // References the already-updated book
-
-            loanRepository.save(loan);
         }
 
         return "redirect:/dashboard";
