@@ -79,6 +79,7 @@
         }
     </style>
 </head>
+
 <body>
 <div class="dashboard-wrapper admin-shell">
     <div th:replace="~{admin-sidebar :: sidebar('books')}"></div>
@@ -91,7 +92,7 @@
             </div>
 
             <div class="header-center">
-                <input type="text" class="header-search" placeholder="Search books...">
+                <input type="text" id="searchInput" class="header-search" placeholder="Search books...">
             </div>
 
             <div class="user-profile">
@@ -124,14 +125,14 @@
                             <th>Actions</th>
                         </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="booksTableBody" th:fragment="bookRows">
                         <tr th:each="book : ${allBooks}">
                             <td th:text="${book.title}">Title Mock</td>
                             <td th:text="${book.author}">Author Mock</td>
                             <td>
-                                    <span class="status-pill"
-                                          th:classappend="${book.status == 'Available' ? 'available' : 'borrowed'}"
-                                          th:text="${book.status}">Available</span>
+                        <span class="status-pill"
+                            th:classappend="${book.status == 'Available' ? 'available' : 'borrowed'}"
+                            th:text="${book.status}">Available</span>
                             </td>
                             <td th:text="${book.avg_rating != null ? book.avg_rating : '0.0'}">4.5</td>
                             <td>
@@ -204,5 +205,30 @@
         </section>
     </main>
 </div>
+
+    <script>
+    (function () {
+        const searchInput = document.getElementById('searchInput');
+        let debounceTimer;
+
+        searchInput.addEventListener('input', function () {
+            clearTimeout(debounceTimer);
+            const query = this.value;
+
+            debounceTimer = setTimeout(() => {
+                fetch('/admin/books/search?query=' + encodeURIComponent(query))
+                    .then(response => {
+                        if (!response.ok) throw new Error('Search request failed');
+                        return response.text();
+                    })
+                    .then(html => {
+                        // re-query each time — the old node is detached after outerHTML swap
+                        document.getElementById('booksTableBody').outerHTML = html;
+                    })
+                    .catch(err => console.error('Live search error:', err));
+            }, 300); // 300ms debounce so it doesn't fire on every keystroke
+        });
+    })();
+    </script>
 </body>
 </html>

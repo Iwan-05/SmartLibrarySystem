@@ -14,7 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
@@ -42,6 +46,110 @@ public class AdminController {
         }
 
         return "admin-loans";
+    }
+    @PostMapping("/loans/save")
+    public String saveLoan(@ModelAttribute("loanForm") Loan loanForm,
+                           @RequestParam("bookTitle") String bookTitle,
+                           @RequestParam("memberId") String memberId,
+                           @RequestParam("inputDueDate") String inputDueDate,
+                           @RequestParam("selectedStatus") String selectedStatus,
+                           RedirectAttributes redirectAttributes) {
+
+        Book book = bookRepository.findByTitleIgnoreCase(bookTitle.trim()).orElse(null);
+        if (book == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Book doesn't exist.");
+            return "redirect:/admin/loans";
+        }
+
+        User member = userRepository.findById(memberId.trim()).orElse(null);
+        if (member == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "User doesn't exist.");
+            return "redirect:/admin/loans";
+        }
+
+        Loan loan;
+        if (loanForm.getLoan_id() != null) {
+            loan = loanRepository.findById(loanForm.getLoan_id()).orElse(new Loan());
+        } else {
+            loan = new Loan();
+            loan.setBorrow_date(LocalDateTime.now()); // adjust if borrow_date is LocalDate
+        }
+
+        loan.setBook(book);
+        loan.setUser_id(member.getUser_id());
+        loan.setDue_date(LocalDate.parse(inputDueDate).atStartOfDay()); // adjust if due_date is LocalDate
+
+        if ("Returned".equals(selectedStatus)) {
+            if (loan.getReturn_date() == null) {
+                LocalDateTime now = LocalDateTime.now();
+                loan.setReturn_date(now);
+                double fineAmount = 0.0;
+                if (loan.getDue_date() != null) {
+                    long daysLate = ChronoUnit.DAYS.between(loan.getDue_date().toLocalDate(), now.toLocalDate());
+                    if (daysLate > 0) {
+                        fineAmount = daysLate * 2.0; // RM2 per day late
+                    }
+                }
+                loan.setFine_amount(fineAmount);
+                if (fineAmount > 0) {
+                    double currentFine = member.getFine();
+                    member.setFine(currentFine + fineAmount);
+                    userRepository.save(member);
+                }
+            }
+        } else {
+            loan.setReturn_date(null);
+        }
+        loanRepository.save(loan);
+        redirectAttributes.addFlashAttribute("successMessage", "Loan saved successfully!");
+        return "redirect:/admin/loans";
+    }
+
+    @GetMapping("/loans/edit/{id}")
+    public String editLoanForm(@PathVariable("id") Long id, Model model) {
+        Loan existing = loanRepository.findById(id).orElse(new Loan());
+
+        model.addAttribute("activeSection", "loans");
+        model.addAttribute("allLoans", loanRepository.findAllOrderedByDate());
+        model.addAttribute("loanForm", existing);
+
+        return "admin-loans";
+    }
+
+    @GetMapping("/loans/delete/{id}")
+    public String deleteLoan(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        loanRepository.deleteById(id);
+        redirectAttributes.addFlashAttribute("successMessage", "Loan record deleted successfully!");
+        return "redirect:/admin/loans";
+    }
+
+    @GetMapping("/loans/search")
+    public String searchLoansLive(@RequestParam(value = "query", required = false) String query,
+                                  @RequestParam(value = "status", required = false) String status,
+                                  Model model) {
+        List<Loan> results;
+        if (query == null || query.trim().isEmpty()) {
+            results = loanRepository.findAllOrderedByDate();
+        } else {
+            results = loanRepository.searchLoans(query.trim());
+        }
+
+        if (status != null && !status.isEmpty()) {
+            LocalDateTime today = LocalDateTime.now(); // change to LocalDateTime.now() if due_date is a LocalDateTime
+            results = results.stream().filter(loan -> {
+                boolean returned = loan.getReturn_date() != null;
+                boolean overdue = !returned && loan.getDue_date() != null && loan.getDue_date().isBefore(today);
+                return switch (status) {
+                    case "active" -> !returned && !overdue;
+                    case "overdue" -> overdue;
+                    case "returned" -> returned;
+                    default -> true;
+                };
+            }).collect(Collectors.toList());
+        }
+
+        model.addAttribute("allLoans", results);
+        return "admin-loans :: loanRows";
     }
 
     @GetMapping("/members")
@@ -227,5 +335,17 @@ public class AdminController {
         }
 
         return "redirect:/admin/books";
+    }
+
+    @GetMapping("/books/search")
+    public String searchBooksLive(@RequestParam(value = "query", required = false) String query, Model model) {
+        List<Book> results;
+        if (query == null || query.trim().isEmpty()) {
+            results = bookRepository.findAll();
+        } else {
+            results = bookRepository.findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCase(query, query);
+        }
+        model.addAttribute("allBooks", results);
+        return "admin-books :: bookRows";
     }
 }
