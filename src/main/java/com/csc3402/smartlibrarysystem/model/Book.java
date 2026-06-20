@@ -22,13 +22,13 @@ public class Book {
     private String cover_url;
     @Column(name="genre")
     private String genre;
-    @Column(name="synopsis", length = 4000)
+    @Column (name="synopsis")
     private String synopsis;
 
     public Book() {
     }
 
-    public Book(Long book_id, String title, String author, String status, double avg_rating, String cover_url, String genre) {
+    public Book(Long book_id, String title, String author, String status, double avg_rating, String cover_url, String genre, String synopsis) {
         this.book_id = book_id;
         this.title = title;
         this.author = author;
@@ -95,9 +95,13 @@ public class Book {
         this.avg_rating = avg_rating;
     }
 
-    public String getSynopsis() { return synopsis; }
+    public String getSynopsis() {
+        return synopsis;
+    }
 
-    public void setSynopsis(String synopsis) { this.synopsis = synopsis; }
+    public void setSynopsis(String synopsis) {
+        this.synopsis = synopsis;
+    }
 
     @Override
     public String toString() {
@@ -109,6 +113,7 @@ public class Book {
                 ", avg_rating=" + avg_rating +
                 ", cover_url='" + cover_url + '\'' +
                 ", genre='" + genre + '\'' +
+                ", synopsis='" + synopsis + '\'' +
                 '}';
     }
 }

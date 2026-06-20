@@ -7,6 +7,12 @@
 </head>
 <body style="display: block;">
 
+<script>
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+    }
+</script>
+
 <div class="dashboard-wrapper">
 
     <aside class="sidebar">
@@ -21,6 +27,7 @@
             </a>
 
             <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <button id="themeToggleBtn" class="theme-toggle-btn">🌙</button>
                 <a th:href="@{/profile}" class="nav-link active">Profile</a>
                 <form th:action="@{/logout}" method="post" style="margin: 0;">
                     <button type="submit" class="nav-link" style="width: 100%; text-align: left; background: transparent; border: none; cursor: pointer; font-family: inherit; font-size: inherit; color: inherit;">
@@ -38,16 +45,14 @@
                 <h1>My Profile</h1>
             </div>
             <div class="header-center"></div>
-            <div class="user-profile">
-                <strong th:text="${currentUser.username}">Davis Workman</strong>
-                <div class="avatar"></div>
-            </div>
         </header>
 
         <div class="profile-container">
 
             <div class="profile-header-card">
-                <div class="avatar-large"></div>
+
+                <div class="avatar-large" th:style="'background-image: url(https://api.dicebear.com/7.x/avataaars/svg?seed=' + ${currentUser != null ? currentUser.username : 'Abu'} + ')'"></div>
+
                 <div class="profile-details">
                     <h2 th:text="${currentUser != null ? currentUser.username : 'Davis Workman'}">Davis Workman</h2>
                     <p th:text="${currentUser != null ? currentUser.faculty : 'Faculty of Computer Science and Information Technology'}">Faculty of Computer Science and Information Technology</p>
@@ -77,6 +82,34 @@
 
     </main>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const themeBtn = document.getElementById('themeToggleBtn');
+        const body = document.body;
+
+        // 1. Check local storage when page loads
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+            if(themeBtn) themeBtn.innerText = '☀️'; // Change icon to sun
+        }
+
+        // 2. Toggle button click event
+        if(themeBtn) {
+            themeBtn.addEventListener('click', function() {
+                body.classList.toggle('dark-mode');
+
+                if (body.classList.contains('dark-mode')) {
+                    localStorage.setItem('theme', 'dark');
+                    themeBtn.innerText = '☀️';
+                } else {
+                    localStorage.setItem('theme', 'light');
+                    themeBtn.innerText = '🌙';
+                }
+            });
+        }
+    });
+</script>
 
 </body>
 </html>

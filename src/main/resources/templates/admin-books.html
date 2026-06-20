@@ -79,6 +79,7 @@
         }
     </style>
 </head>
+
 <body>
 <div class="dashboard-wrapper admin-shell">
     <div th:replace="~{admin-sidebar :: sidebar('books')}"></div>
@@ -91,7 +92,7 @@
             </div>
 
             <div class="header-center">
-                <input type="text" class="header-search" placeholder="Search books...">
+                <input type="text" id="searchInput" class="header-search" placeholder="Search books...">
             </div>
 
             <div class="user-profile">
@@ -124,14 +125,14 @@
                             <th>Actions</th>
                         </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="booksTableBody" th:fragment="bookRows">
                         <tr th:each="book : ${allBooks}">
                             <td th:text="${book.title}">Title Mock</td>
                             <td th:text="${book.author}">Author Mock</td>
                             <td>
-                                    <span class="status-pill"
-                                          th:classappend="${book.status == 'Available' ? 'available' : 'borrowed'}"
-                                          th:text="${book.status}">Available</span>
+                        <span class="status-pill"
+                            th:classappend="${book.status == 'Available' ? 'available' : 'borrowed'}"
+                            th:text="${book.status}">Available</span>
                             </td>
                             <td th:text="${book.avg_rating != null ? book.avg_rating : '0.0'}">4.5</td>
                             <td>
@@ -149,12 +150,26 @@
             </article>
 
             <article class="admin-panel">
-                <div class="panel-header">
-                    <div>
-                        <span class="panel-kicker">Data Entry</span>
-                        <h2 th:text="${bookForm.book_id != null} ? 'Modify Existing Book' : 'Add New Book Entry'">Add New Book</h2>
+                <article class="admin-panel">
+
+                    <div class="panel-header" style="border-bottom: 1px dashed var(--border-color, #e5e5e5); padding-bottom: 15px; margin-bottom: 20px;">
+                        <div>
+                            <span class="panel-kicker">Automation</span>
+                            <h2>Google Books Import</h2>
+                        </div>
                     </div>
-                </div>
+
+                    <div th:if="${errorMessage}" class="alert-success" style="background: rgba(197, 34, 31, 0.1); color: #c5221f;" th:text="${errorMessage}"></div>
+
+                    <form th:action="@{/admin/books/fetch-and-save}" method="POST" style="margin-bottom: 30px;">
+                        <div class="form-group">
+                            <label for="apiSearch">Search & Auto-Insert</label>
+                            <input type="text" id="apiSearch" name="searchQuery" class="form-control" required placeholder="Type Title, Author, or ISBN..." />
+                        </div>
+                        <button type="submit" class="submit-btn" style="background-color: #28a745;">Import Book Data</button>
+                    </form>
+
+                    <hr style="border: 0; border-top: 1px solid var(--border-color, #e5e5e5); margin: 25px 0;" />
 
                 <form th:action="@{/admin/books/save}" th:object="${bookForm}" method="POST">
                     <input type="hidden" th:field="*{book_id}" />
@@ -190,5 +205,30 @@
         </section>
     </main>
 </div>
+
+    <script>
+    (function () {
+        const searchInput = document.getElementById('searchInput');
+        let debounceTimer;
+
+        searchInput.addEventListener('input', function () {
+            clearTimeout(debounceTimer);
+            const query = this.value;
+
+            debounceTimer = setTimeout(() => {
+                fetch('/admin/books/search?query=' + encodeURIComponent(query))
+                    .then(response => {
+                        if (!response.ok) throw new Error('Search request failed');
+                        return response.text();
+                    })
+                    .then(html => {
+                        // re-query each time — the old node is detached after outerHTML swap
+                        document.getElementById('booksTableBody').outerHTML = html;
+                    })
+                    .catch(err => console.error('Live search error:', err));
+            }, 300); // 300ms debounce so it doesn't fire on every keystroke
+        });
+    })();
+    </script>
 </body>
 </html>

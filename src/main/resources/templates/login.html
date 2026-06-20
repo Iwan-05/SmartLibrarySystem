@@ -159,7 +159,13 @@
         You have been securely logged out.
     </div>
 
-    <form th:action="@{/login}" method="post">
+    <div th:if="${errorMessage}"
+         style="background: rgba(255, 87, 87, 0.1); border: 1px solid rgba(255, 87, 87, 0.4); color: #d63031; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; text-align: center; font-size: 0.95rem; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <span style="font-size: 1.2rem;">⚠️</span>
+        <span th:text="${errorMessage}">Oh no, wrong role!</span>
+    </div>
+
+    <form th:action="@{/process-login}" method="post">
         <input type="text" name="username" class="login-input" placeholder="Username" required autocomplete="username">
         <input type="password" name="password" class="login-input" placeholder="Password" required autocomplete="current-password">
 

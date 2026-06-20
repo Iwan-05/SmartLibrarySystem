@@ -22,7 +22,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         // We add "/register" right next to "/login" so the bouncer lets them through!
-                        .requestMatchers("/login", "/register", "/css/**", "/images/**", "/js/**").permitAll()
+                        .requestMatchers("/login","/process-login", "/register", "/css/**", "/images/**", "/js/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("LIBRARIAN")
                         .anyRequest().authenticated()
                 )

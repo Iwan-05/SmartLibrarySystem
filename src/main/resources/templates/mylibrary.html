@@ -4,8 +4,61 @@
     <meta charset="UTF-8">
     <title>Library System - My Library</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <style>
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100vh;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .rating-popup {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            width: 90%;
+            max-width: 350px;
+            text-align: center;
+            transform: translateY(20px);
+        }
+        .star-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 25px 0;
+            font-size: 2.5rem;
+            color: rgba(200, 190, 180, 0.5);
+            cursor: pointer;
+        }
+        .star-container span {
+            transition: color 0.2s, transform 0.2s;
+        }
+        .star-container span:hover {
+            transform: scale(1.2);
+        }
+
+        /* Floating Animation Styling for Empty State */
+        @keyframes floatBook {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
 </head>
 <body style="display: block;">
+
+<script>
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+    }
+</script>
 
 <div class="dashboard-wrapper">
 
@@ -21,7 +74,13 @@
                 <span class="nav-hint" style="color: var(--accent-color);">Currently Borrowed</span>
             </a>
 
+            <div class="sidebar-quote-box">
+                <p id="dailyQuote">"Loading wisdom..."</p>
+                <span id="dailyAuthor">- System</span>
+            </div>
+
             <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <button id="themeToggleBtn" class="theme-toggle-btn">🌙</button>
                 <a th:href="@{/profile}" class="nav-link">Profile</a>
                 <form th:action="@{/logout}" method="post" style="margin: 0;">
                     <button type="submit" class="nav-link" style="width: 100%; text-align: left; background: transparent; border: none; cursor: pointer; font-family: inherit; font-size: inherit; color: inherit;">
@@ -43,14 +102,30 @@
                 <input type="text" class="header-search" placeholder="Search your borrowed books...">
             </div>
 
-            <div class="user-profile">
-                <strong th:text="${currentUser.username}">Davis Workman</strong>
-                <div class="avatar"></div>
-            </div>
+            <a th:href="@{/profile}" class="profile-pill">
+                <strong th:text="${currentUser != null ? currentUser.username : 'Abu'}">Abu</strong>
+
+                <div class="avatar" th:style="'background-image: url(https://api.dicebear.com/7.x/avataaars/svg?seed=' + ${currentUser != null ? currentUser.username : 'Abu'} + ')'"></div>
+            </a>
         </header>
 
         <section>
-            <div class="book-shelf">
+            <div th:if="${#lists.isEmpty(loans)}" style="max-width: 600px; padding: 80px 40px; text-align: center; margin: 60px auto; background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(16px); border-radius: 24px; border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 10px 40px rgba(130, 120, 110, 0.1);">
+
+                <div style="font-size: 4.5rem; margin-bottom: 25px; animation: floatBook 3.5s ease-in-out infinite; opacity: 0.8;">📖</div>
+
+                <h2 style="color: var(--text-primary, #222); margin-bottom: 15px; font-size: 1.8rem;">No Active Loans</h2>
+                <p style="color: var(--text-secondary, #666); font-size: 1.1rem; line-height: 1.6;">
+                    Your library is currently empty. <br>
+                    Head over to
+                    <a th:href="@{/dashboard}" style="color: var(--text-primary, #222); font-weight: 600; text-decoration: none; border-bottom: 1px solid #222; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">Discover</a>
+                    or
+                    <a th:href="@{/category}" style="color: var(--text-primary, #222); font-weight: 600; text-decoration: none; border-bottom: 1px solid #222; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">Categories</a>
+                    to find your next great read.
+                </p>
+            </div>
+
+            <div th:unless="${#lists.isEmpty(loans)}" class="book-shelf">
 
                 <div class="book-card" th:each="loan : ${loans}">
                     <img th:src="${loan.book.cover_url}" alt="Book Cover" class="book-cover">
@@ -63,11 +138,7 @@
                             ⏳ Due: <span th:text="${#temporals.format(loan.due_date, 'dd MMM yyyy')}">12 Oct 2026</span>
                         </div>
 
-                        <form th:action="@{/returnBook}" method="post">
-                            <input type="hidden" name="loanId" th:value="${loan.loan_id}" />
-                            <input type="hidden" name="bookId" th:value="${loan.book.book_id}" />
-                            <button type="submit" class="btn-return">Return Book</button>
-                        </form>
+                        <button type="button" class="btn-return" th:onclick="'initiateReturn(' + ${loan.loan_id} + ', ' + ${loan.book.book_id} + ')'">Return Book</button>
                     </div>
                 </div>
 
@@ -76,6 +147,128 @@
 
     </main>
 </div>
+
+<div class="modal-overlay" id="ratingModal">
+    <div class="rating-popup">
+        <h2 style="margin-top: 0;">Return Successful!</h2>
+        <p style="color: #666;">How would you rate this book?</p>
+
+        <div class="star-container" id="starGroup">
+            <span onclick="setRating(1)" onmouseover="hoverStars(1)" onmouseout="resetStars()">★</span>
+            <span onclick="setRating(2)" onmouseover="hoverStars(2)" onmouseout="resetStars()">★</span>
+            <span onclick="setRating(3)" onmouseover="hoverStars(3)" onmouseout="resetStars()">★</span>
+            <span onclick="setRating(4)" onmouseover="hoverStars(4)" onmouseout="resetStars()">★</span>
+            <span onclick="setRating(5)" onmouseover="hoverStars(5)" onmouseout="resetStars()">★</span>
+        </div>
+
+        <form th:action="@{/returnBook}" method="post" id="ratingForm">
+            <input type="hidden" name="loanId" id="modalLoanId">
+            <input type="hidden" name="bookId" id="modalBookId">
+            <input type="hidden" name="ratingScore" id="modalRatingScore" value="0">
+
+            <button type="button" class="btn-return" style="width: 100%; padding: 12px; margin-bottom: 10px;" onclick="submitFinalRating()">Submit Rating</button>
+            <br>
+            <button type="button" onclick="closeRatingModal()" style="background: transparent; border: none; color: #888; font-weight: 600; cursor: pointer;">Skip</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    let selectedRating = 0;
+    const stars = document.querySelectorAll('#starGroup span');
+
+    function initiateReturn(loanId, bookId) {
+        document.getElementById('modalLoanId').value = loanId;
+        document.getElementById('modalBookId').value = bookId;
+        document.getElementById('ratingModal').style.display = 'flex';
+    }
+
+    function closeRatingModal() {
+        document.getElementById('ratingModal').style.display = 'none';
+        selectedRating = 0;
+        resetStars();
+        document.getElementById('ratingForm').submit();
+    }
+
+    function hoverStars(count) {
+        stars.forEach((star, index) => {
+            star.style.color = index < count ? '#FFD700' : 'rgba(200, 190, 180, 0.5)';
+        });
+    }
+
+    function resetStars() {
+        hoverStars(selectedRating);
+    }
+
+    function setRating(count) {
+        selectedRating = count;
+        document.getElementById('modalRatingScore').value = count;
+        hoverStars(count);
+    }
+
+    function submitFinalRating() {
+        if (selectedRating === 0) {
+            alert("Please select a star rating or click Skip.");
+            return;
+        }
+        document.getElementById('ratingForm').submit();
+    }
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const quotes = [
+            { text: "A room without books is like a body without a soul.", author: "Marcus Tullius Cicero" },
+            { text: "So many books, so little time.", author: "Frank Zappa" },
+            { text: "There is no friend as loyal as a book.", author: "Ernest Hemingway" },
+            { text: "Books are a uniquely portable magic.", author: "Stephen King" },
+            { text: "That is part of the beauty of all literature. You discover that your longings are universal longings.", author: "F. Scott Fitzgerald" },
+            { text: "Reading is essential for those who seek to rise above the ordinary.", author: "Jim Rohn" },
+            { text: "I have always imagined that Paradise will be a kind of library.", author: "Jorge Luis Borges" },
+            { text: "A reader lives a thousand lives before he dies. The man who never reads lives only one.", author: "George R.R. Martin" }
+        ];
+
+        // Pick a random number between 0 and the length of the array
+        const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+
+        // Inject the text into the HTML
+        const quoteElement = document.getElementById('dailyQuote');
+        const authorElement = document.getElementById('dailyAuthor');
+
+        if (quoteElement && authorElement) {
+            quoteElement.innerText = '"' + randomQuote.text + '"';
+            authorElement.innerText = "- " + randomQuote.author;
+        }
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const themeBtn = document.getElementById('themeToggleBtn');
+        const body = document.body;
+
+        // 1. Check local storage when page loads
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+            if(themeBtn) themeBtn.innerText = '☀️'; // Change icon to sun
+        }
+
+        // 2. Toggle button click event
+        if(themeBtn) {
+            themeBtn.addEventListener('click', function() {
+                body.classList.toggle('dark-mode');
+
+                if (body.classList.contains('dark-mode')) {
+                    localStorage.setItem('theme', 'dark');
+                    themeBtn.innerText = '☀️';
+                } else {
+                    localStorage.setItem('theme', 'light');
+                    themeBtn.innerText = '🌙';
+                }
+            });
+        }
+    });
+</script>
 
 </body>
 </html>

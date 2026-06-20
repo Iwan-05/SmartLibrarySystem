@@ -17,4 +17,14 @@ public interface LoanRepository extends JpaRepository<Loan, Long>    {
 
     @Query("SELECT l FROM Loan l WHERE l.return_date IS NULL ORDER BY l.due_date ASC")
     List<Loan> findAllActiveLoansOrderByDueDate();
+
+    @Query("SELECT l FROM Loan l WHERE l.return_date IS NOT NULL ORDER BY l.return_date DESC")
+    List<Loan> findRecentlyReturnedLoans();
+
+    @Query("SELECT l FROM Loan l ORDER BY l.borrow_date DESC")
+    List<Loan> findAllOrderedByDate();
+
+    @Query("SELECT l FROM Loan l WHERE LOWER(l.book.title) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "OR LOWER(l.user_id) LIKE LOWER(CONCAT('%', :query, '%')) ORDER BY l.borrow_date DESC")
+    List<Loan> searchLoans(@Param("query") String query);
 }
