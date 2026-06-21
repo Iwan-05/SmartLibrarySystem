@@ -10,31 +10,21 @@ public class User {
 
     @Id
     @Column(name="matric_id", length = 8)
-    @Pattern(regexp = "^[0-9]{6}$|^BC[0-9]{6}$", message = "Matric ID must be exactly 6 digits, or 'BC' followed by 6 digits.")
+    @Pattern(regexp = "^[0-9]{6}$|^BC[0-9]{6}$")
     private String matric_id;
-
     @Column(name="username")
     private String username;
-
     @Column(name="password")
     private String password;
-
     @Column(name="role")
     private String role;
-
     @Column(name="fine")
     private double fine;
-
     @Column(name="faculty")
     private String faculty;
-
-    @Column(name="access_status")
-    private String access_status = "ACTIVE";
-
     // Relationship: One User has Many Loans
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Loan> loans;
-
     // Relationship: One User has Many Ratings
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Rating> ratings;
@@ -49,7 +39,6 @@ public class User {
         this.role = role;
         this.fine = fine;
         this.faculty = faculty;
-        this.access_status = access_status;
     }
 
     public String getMatric_id() { return matric_id; }
@@ -70,9 +59,6 @@ public class User {
     public String getFaculty() { return faculty; }
     public void setFaculty(String faculty) { this.faculty = faculty; }
 
-    public String getAccess_status() { return access_status; }
-    public void setAccess_status(String access_status) { this.access_status = access_status; }
-
     public Set<Loan> getLoans() { return loans; }
     public void setLoans(Set<Loan> loans) { this.loans = loans; }
 
@@ -84,9 +70,12 @@ public class User {
         return "User{" +
                 "matric_id='" + matric_id + '\'' +
                 ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
                 ", role='" + role + '\'' +
+                ", fine=" + fine +
                 ", faculty='" + faculty + '\'' +
-                ", access_status='" + access_status + '\'' +
+                ", loans=" + loans +
+                ", ratings=" + ratings +
                 '}';
     }
 }
