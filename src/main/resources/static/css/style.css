@@ -1,11 +1,11 @@
 /* =========================================
-   --- GLOBAL VARIABLES (Light/Cream Theme) ---
+   --- GLOBAL VARIABLES (Golden Hour Theme) ---
    ========================================= */
 :root {
     --bg-main: #f4f0ea;       /* Warm cream background */
     --bg-panel: #ffffff;      /* Pure white for floating cards/sidebar */
-    --accent-color: #204035;  /* Deep forest green for buttons/focus */
-    --accent-hover: #2e5c4c;  /* Lighter green for hover effects */
+    --accent-color: #ea580c;  /* Burnt Orange */
+    --accent-hover: #c2410c;  /* Darker Orange for hover effects */
     --text-primary: #1a1a1a;  /* Near black for high readability */
     --text-secondary: #666666;/* Muted gray for labels/nav */
     --border-color: #e5e5e5;  /* Soft structural borders */
@@ -17,8 +17,8 @@
 body.dark-mode {
     --bg-main: #121212;       /* Deep matte black background */
     --bg-panel: #1e1e1e;      /* Slightly lighter dark panel */
-    --accent-color: #4ade80;  /* Bright mint green so it pops on dark! */
-    --accent-hover: #22c55e;
+    --accent-color: #fb923c;  /* Bright Orange */
+    --accent-hover: #fdba74;  /* Lighter Orange */
     --text-primary: #f8f9fa;  /* Crisp off-white text */
     --text-secondary: #9ca3af;/* Muted light gray */
     --border-color: #374151;  /* Dark structural borders */
@@ -87,7 +87,7 @@ body {
 .form-group input:focus {
     border-color: var(--accent-color);
     background-color: var(--bg-panel);
-    box-shadow: 0 0 0 3px rgba(32, 64, 53, 0.1);
+    box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15); /* Orange shadow */
 }
 
 .role-toggle {
@@ -128,19 +128,48 @@ body {
    --- COMPONENT 2: DASHBOARD MASTER LAYOUT ---
    ========================================= */
 
+/* --- STATIC IMAGE BACKGROUND --- */
 .dashboard-wrapper {
     display: flex;
     height: 100vh;
     width: 100vw;
-    background-color: var(--bg-main);
     overflow: hidden;
+
+    /* Background image logic */
+    background-image: url('../image/bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
     transition: background-color 0.3s ease;
+}
+
+/* Dark Mode Image Overlay */
+body.dark-mode .dashboard-wrapper::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(18, 18, 18, 0.85); /* Deep dark tint */
+    z-index: 0;
+    pointer-events: none;
+    transition: background 0.3s ease;
+}
+
+/* Bring workspace and sidebar to front */
+.sidebar, .main-workspace {
+    position: relative;
+    z-index: 1;
 }
 
 /* --- TIER 1: GLOBAL SIDEBAR --- */
 .sidebar {
     width: 250px;
-    background-color: var(--bg-panel);
+    background-color: rgba(255, 255, 255, 0.5); /* Dropped opacity to 0.5 for more glass effect */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     padding: 40px 30px;
     display: flex;
     flex-direction: column;
@@ -151,6 +180,10 @@ body {
     flex-shrink: 0;
     box-sizing: border-box;
     transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+body.dark-mode .sidebar {
+    background-color: rgba(30, 30, 30, 0.6);
 }
 
 .brand-logo {
@@ -178,7 +211,7 @@ body {
 }
 
 .nav-link.active, .nav-link:hover {
-    background-color: rgba(100, 200, 150, 0.15); /* Adjusted for both modes */
+    background-color: rgba(234, 88, 12, 0.1); /* Soft orange tint */
     color: var(--accent-color);
 }
 
@@ -200,7 +233,7 @@ body {
 /* --- HEADER --- */
 .top-header {
     display: grid;
-    grid-template-columns: 1fr auto auto; /* Adjusted to fit the moon toggle! */
+    grid-template-columns: 1fr auto auto;
     align-items: center;
     gap: 20px;
     margin-bottom: 50px;
@@ -217,36 +250,34 @@ body {
     justify-content: center;
 }
 
-.header-search {
+/* --- SEARCH BARS (Frosted Glass) --- */
+.header-search, .premium-search {
     padding: 12px 24px;
     border-radius: 30px;
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(200, 190, 180, 0.6); /* Warm glass border */
     width: 350px;
-    background-color: var(--bg-panel);
+    background-color: rgba(255, 255, 255, 0.5); /* Translucent glass */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     color: var(--text-primary);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
     outline: none;
     transition: all 0.3s ease;
+    font-family: inherit;
+    font-size: 0.95rem;
 }
 
-/* NEW: The Dark Mode Toggle Button */
-.theme-toggle-btn {
-    background: var(--bg-panel);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-    font-size: 1.2rem;
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+.header-search::placeholder, .premium-search::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.8;
 }
-.theme-toggle-btn:hover {
-    transform: rotate(15deg) scale(1.05);
+
+/* Warm glow on focus */
+.header-search:focus, .premium-search:focus {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-color: var(--accent-color);
+    box-shadow: 0 4px 20px rgba(234, 88, 12, 0.15);
+    transform: translateY(-2px);
 }
 
 .user-profile {
@@ -297,7 +328,6 @@ body {
 /* =========================================
    SIDEBAR QUOTE OF THE DAY WIDGET
    ========================================= */
-
 .sidebar-quote-box {
     margin-top: 35px;
     padding: 18px;
@@ -325,6 +355,45 @@ body {
     color: var(--text-secondary);
     display: block;
     text-align: right;
+}
+
+/* =========================================
+   --- SIDEBAR THEME TOGGLE BUTTON ---
+   ========================================= */
+.sidebar-theme-toggle {
+    width: 100%;
+    text-align: left;
+    background: rgba(234, 88, 12, 0.05); /* Very subtle warm tint */
+    border: 1px solid rgba(234, 88, 12, 0.2); /* Soft orange border */
+    padding: 12px 16px;
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: inherit;
+    font-size: 0.95rem;
+}
+
+.sidebar-theme-toggle:hover {
+    background: rgba(234, 88, 12, 0.15);
+    border-color: var(--accent-color);
+    transform: translateY(-2px);
+}
+
+#themeIcon {
+    font-size: 1.1rem;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 4px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: background 0.3s ease;
 }
 
 /* --- CSS GRID: BOOK RECOMMENDATIONS --- */
@@ -403,14 +472,13 @@ body {
 
 .filter-pill.active {
     background: var(--text-primary);
-    color: var(--bg-panel); /* Inverts color cleanly */
+    color: var(--bg-panel);
     border-color: var(--text-primary);
 }
 
 /* =========================================
    --- MY LIBRARY ---
    ========================================= */
-
 .due-date {
     font-size: 0.85rem;
     font-weight: 600;
@@ -440,7 +508,7 @@ body {
 
 .btn-return:hover {
     border-color: var(--accent-color);
-    background-color: rgba(32, 64, 53, 0.05);
+    background-color: rgba(234, 88, 12, 0.05); /* Orange hover tint */
     color: var(--accent-color);
 }
 
@@ -480,7 +548,7 @@ body {
     display: inline-block;
     margin-top: 12px;
     padding: 6px 16px;
-    background-color: rgba(100, 200, 150, 0.15);
+    background-color: rgba(234, 88, 12, 0.15); /* Orange badge tint */
     color: var(--accent-color);
     border-radius: 20px;
     font-size: 0.85rem;
@@ -526,4 +594,31 @@ body.dark-mode .book-card:hover {
 body.dark-mode .role-toggle,
 body.dark-mode .form-group input {
     background-color: #2a2a2a;
+}
+
+/* --- DARK MODE FIXES FOR SEARCH & TOGGLE --- */
+body.dark-mode .header-search,
+body.dark-mode .premium-search {
+    background-color: rgba(40, 40, 40, 0.6);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .header-search:focus,
+body.dark-mode .premium-search:focus {
+    background-color: rgba(60, 60, 60, 0.95);
+    border-color: var(--accent-color);
+    box-shadow: 0 4px 20px rgba(251, 146, 60, 0.15);
+}
+
+body.dark-mode .sidebar-theme-toggle {
+    background: rgba(251, 146, 60, 0.08);
+    border-color: rgba(251, 146, 60, 0.2);
+}
+
+body.dark-mode .sidebar-theme-toggle:hover {
+    background: rgba(251, 146, 60, 0.15);
+}
+
+body.dark-mode #themeIcon {
+    background: rgba(0, 0, 0, 0.4);
 }

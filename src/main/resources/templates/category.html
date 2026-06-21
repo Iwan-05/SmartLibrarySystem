@@ -160,14 +160,17 @@
                 <span class="nav-hint">Currently Borrowed</span>
             </a>
 
-            <!-- NEW: DYNAMIC QUOTE BOX -->
             <div class="sidebar-quote-box">
                 <p id="dailyQuote">"Loading wisdom..."</p>
                 <span id="dailyAuthor">- System</span>
             </div>
 
             <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
-                <button id="themeToggleBtn" class="theme-toggle-btn">🌙</button>
+
+                <button id="themeToggleBtn" class="sidebar-theme-toggle">
+                    <span id="themeIcon">🌙</span> Toggle Theme
+                </button>
+
                 <a th:href="@{/profile}" class="nav-link">Profile</a>
                 <form th:action="@{/logout}" method="post" style="margin: 0;">
                     <button type="submit" class="nav-link" style="width: 100%; text-align: left; background: transparent; border: none; cursor: pointer; font-family: inherit; font-size: inherit; color: inherit;">
@@ -184,12 +187,15 @@
             <div class="header-left">
                 <h1>Categories</h1>
             </div>
-            <div class="header-center"></div>
-            <a th:href="@{/profile}" class="profile-pill">
-                <strong th:text="${currentUser != null ? currentUser.username : 'Abu'}">Abu</strong>
 
-                <div class="avatar" th:style="'background-image: url(https://api.dicebear.com/7.x/avataaars/svg?seed=' + ${currentUser != null ? currentUser.username : 'Abu'} + ')'"></div>
-            </a>
+            <div class="header-center"></div>
+
+            <div class="header-right" style="display: flex; align-items: center; justify-content: flex-end;">
+                <a th:href="@{/profile}" class="profile-pill" style="margin: 0;">
+                    <strong th:text="${currentUser != null ? currentUser.username : 'Abu'}">Abu</strong>
+                    <div class="avatar" th:style="'background-image: url(https://api.dicebear.com/7.x/avataaars/svg?seed=' + ${currentUser != null ? currentUser.username : 'Abu'} + ')'"></div>
+                </a>
+            </div>
         </header>
 
         <div class="action-bar">
@@ -439,7 +445,6 @@
     });
 </script>
 
-<!-- NEW: DYNAMIC SIDEBAR QUOTE SCRIPT -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const quotes = [
@@ -470,25 +475,23 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const themeBtn = document.getElementById('themeToggleBtn');
+        const themeIcon = document.getElementById('themeIcon');
         const body = document.body;
 
-        // 1. Check local storage when page loads
-        if (localStorage.getItem('theme') === 'dark') {
-            body.classList.add('dark-mode');
-            if(themeBtn) themeBtn.innerText = '☀️'; // Change icon to sun
+        if (body.classList.contains('dark-mode')) {
+            if(themeIcon) themeIcon.innerText = '☀️';
         }
 
-        // 2. Toggle button click event
         if(themeBtn) {
             themeBtn.addEventListener('click', function() {
                 body.classList.toggle('dark-mode');
 
                 if (body.classList.contains('dark-mode')) {
                     localStorage.setItem('theme', 'dark');
-                    themeBtn.innerText = '☀️';
+                    themeIcon.innerText = '☀️';
                 } else {
                     localStorage.setItem('theme', 'light');
-                    themeBtn.innerText = '🌙';
+                    themeIcon.innerText = '🌙';
                 }
             });
         }

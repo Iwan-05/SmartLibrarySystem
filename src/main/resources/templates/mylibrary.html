@@ -18,8 +18,8 @@
             align-items: center;
         }
         .rating-popup {
-            background: rgba(255, 255, 255, 0.85);
-            border: 1px solid rgba(255, 255, 255, 0.9);
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
             border-radius: 20px;
             padding: 40px;
@@ -80,7 +80,11 @@
             </div>
 
             <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
-                <button id="themeToggleBtn" class="theme-toggle-btn">🌙</button>
+
+                <button id="themeToggleBtn" class="sidebar-theme-toggle">
+                    <span id="themeIcon">🌙</span> Toggle Theme
+                </button>
+
                 <a th:href="@{/profile}" class="nav-link">Profile</a>
                 <form th:action="@{/logout}" method="post" style="margin: 0;">
                     <button type="submit" class="nav-link" style="width: 100%; text-align: left; background: transparent; border: none; cursor: pointer; font-family: inherit; font-size: inherit; color: inherit;">
@@ -102,25 +106,26 @@
                 <input type="text" class="header-search" placeholder="Search your borrowed books...">
             </div>
 
-            <a th:href="@{/profile}" class="profile-pill">
-                <strong th:text="${currentUser != null ? currentUser.username : 'Abu'}">Abu</strong>
-
-                <div class="avatar" th:style="'background-image: url(https://api.dicebear.com/7.x/avataaars/svg?seed=' + ${currentUser != null ? currentUser.username : 'Abu'} + ')'"></div>
-            </a>
+            <div class="header-right" style="display: flex; align-items: center; justify-content: flex-end;">
+                <a th:href="@{/profile}" class="profile-pill" style="margin: 0;">
+                    <strong th:text="${currentUser != null ? currentUser.username : 'Abu'}">Abu</strong>
+                    <div class="avatar" th:style="'background-image: url(https://api.dicebear.com/7.x/avataaars/svg?seed=' + ${currentUser != null ? currentUser.username : 'Abu'} + ')'"></div>
+                </a>
+            </div>
         </header>
 
         <section>
-            <div th:if="${#lists.isEmpty(loans)}" style="max-width: 600px; padding: 80px 40px; text-align: center; margin: 60px auto; background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(16px); border-radius: 24px; border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 10px 40px rgba(130, 120, 110, 0.1);">
+            <div th:if="${#lists.isEmpty(loans)}" style="max-width: 600px; padding: 80px 40px; text-align: center; margin: 60px auto; background: var(--bg-panel); backdrop-filter: blur(16px); border-radius: 24px; border: 1px solid var(--border-color); box-shadow: 0 10px 40px rgba(0,0,0, 0.1);">
 
                 <div style="font-size: 4.5rem; margin-bottom: 25px; animation: floatBook 3.5s ease-in-out infinite; opacity: 0.8;">📖</div>
 
-                <h2 style="color: var(--text-primary, #222); margin-bottom: 15px; font-size: 1.8rem;">No Active Loans</h2>
-                <p style="color: var(--text-secondary, #666); font-size: 1.1rem; line-height: 1.6;">
+                <h2 style="color: var(--text-primary); margin-bottom: 15px; font-size: 1.8rem;">No Active Loans</h2>
+                <p style="color: var(--text-secondary); font-size: 1.1rem; line-height: 1.6;">
                     Your library is currently empty. <br>
                     Head over to
-                    <a th:href="@{/dashboard}" style="color: var(--text-primary, #222); font-weight: 600; text-decoration: none; border-bottom: 1px solid #222; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">Discover</a>
+                    <a th:href="@{/dashboard}" style="color: var(--text-primary); font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--text-primary); transition: opacity 0.2s;" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">Discover</a>
                     or
-                    <a th:href="@{/category}" style="color: var(--text-primary, #222); font-weight: 600; text-decoration: none; border-bottom: 1px solid #222; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">Categories</a>
+                    <a th:href="@{/category}" style="color: var(--text-primary); font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--text-primary); transition: opacity 0.2s;" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">Categories</a>
                     to find your next great read.
                 </p>
             </div>
@@ -150,8 +155,8 @@
 
 <div class="modal-overlay" id="ratingModal">
     <div class="rating-popup">
-        <h2 style="margin-top: 0;">Return Successful!</h2>
-        <p style="color: #666;">How would you rate this book?</p>
+        <h2 style="margin-top: 0; color: var(--text-primary);">Return Successful!</h2>
+        <p style="color: var(--text-secondary);">How would you rate this book?</p>
 
         <div class="star-container" id="starGroup">
             <span onclick="setRating(1)" onmouseover="hoverStars(1)" onmouseout="resetStars()">★</span>
@@ -166,9 +171,9 @@
             <input type="hidden" name="bookId" id="modalBookId">
             <input type="hidden" name="ratingScore" id="modalRatingScore" value="0">
 
-            <button type="button" class="btn-return" style="width: 100%; padding: 12px; margin-bottom: 10px;" onclick="submitFinalRating()">Submit Rating</button>
+            <button type="button" class="btn-primary" style="width: 100%; padding: 12px; margin-bottom: 10px;" onclick="submitFinalRating()">Submit Rating</button>
             <br>
-            <button type="button" onclick="closeRatingModal()" style="background: transparent; border: none; color: #888; font-weight: 600; cursor: pointer;">Skip</button>
+            <button type="button" onclick="closeRatingModal()" style="background: transparent; border: none; color: var(--text-secondary); font-weight: 600; cursor: pointer;">Skip</button>
         </form>
     </div>
 </div>
@@ -245,25 +250,23 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const themeBtn = document.getElementById('themeToggleBtn');
+        const themeIcon = document.getElementById('themeIcon');
         const body = document.body;
 
-        // 1. Check local storage when page loads
-        if (localStorage.getItem('theme') === 'dark') {
-            body.classList.add('dark-mode');
-            if(themeBtn) themeBtn.innerText = '☀️'; // Change icon to sun
+        if (body.classList.contains('dark-mode')) {
+            if(themeIcon) themeIcon.innerText = '☀️';
         }
 
-        // 2. Toggle button click event
         if(themeBtn) {
             themeBtn.addEventListener('click', function() {
                 body.classList.toggle('dark-mode');
 
                 if (body.classList.contains('dark-mode')) {
                     localStorage.setItem('theme', 'dark');
-                    themeBtn.innerText = '☀️';
+                    themeIcon.innerText = '☀️';
                 } else {
                     localStorage.setItem('theme', 'light');
-                    themeBtn.innerText = '🌙';
+                    themeIcon.innerText = '🌙';
                 }
             });
         }
