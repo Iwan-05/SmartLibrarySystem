@@ -107,7 +107,8 @@ public class LoginController {
 
     // Processes new user registration
     @PostMapping("/register")
-    public String registerUser(@RequestParam String username,
+    public String registerUser(@RequestParam String matric_id,
+                               @RequestParam String username,
                                @RequestParam String password,
                                @RequestParam String confirmPassword,
                                @RequestParam String faculty,
@@ -125,6 +126,7 @@ public class LoginController {
         }
 
         User newUser = new User();
+        newUser.setMatric_id(matric_id);
         newUser.setUsername(username);
         newUser.setPassword(password);
         newUser.setRole(role);

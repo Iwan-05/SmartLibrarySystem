@@ -221,6 +221,8 @@ public class DashboardController {
             Loan loan = new Loan();
             loan.setUser(currentUser);
             loan.setBook(book);
+            loan.setBorrow_date(LocalDateTime.now());
+            loan.setDue_date(LocalDateTime.now().plusDays(7));
             loanRepository.save(loan);
 
             book.setStatus("Borrowed");
