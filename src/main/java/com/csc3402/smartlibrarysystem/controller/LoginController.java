@@ -46,11 +46,14 @@ public class LoginController {
                                HttpServletRequest request,
                                HttpServletResponse response) {
 
+        String cleanUsername = username.trim();
+
+
         System.out.println("--- LOGIN ATTEMPT ---");
         System.out.println("User entered: " + username);
         System.out.println("Role selected: " + role);
 
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(cleanUsername);
 
         // 1. Check if user exists and password matches
         if (user == null || !user.getPassword().equals(password)) {

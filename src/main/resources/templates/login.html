@@ -166,7 +166,7 @@
     </div>
 
     <form th:action="@{/process-login}" method="post">
-        <input type="text" name="username" class="login-input" placeholder="Username" required autocomplete="username">
+        <input type="text" name="username" class="login-input" placeholder="Username" required autocomplete="username" onblur="this.value=this.value.trim()">
         <input type="password" name="password" class="login-input" placeholder="Password" required autocomplete="current-password">
 
         <div class="role-toggle-modern">
