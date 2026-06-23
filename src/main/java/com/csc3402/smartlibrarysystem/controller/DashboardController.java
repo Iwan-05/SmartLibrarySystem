@@ -41,18 +41,35 @@ public class DashboardController {
     public String showDashboard(@RequestParam(name = "search", required = false) String search,
                                 Model model,
                                 Principal principal) {
-        List<Book> filteredBooks;
+        User currentUser = userRepository.findByUsername(principal.getName());
 
+        // 1. Check for overdue books
+        boolean hasOverdueBook = false;
+        List<Loan> activeLoans = loanRepository.findActiveLoansByUserId(currentUser.getMatric_id());
+
+        for (Loan loan : activeLoans) {
+            if (LocalDateTime.now().isAfter(loan.getDue_date())) {
+                hasOverdueBook = true;
+                break; // Stop checking once we find at least one overdue book
+            }
+        }
+
+        // 2. Display the appropriate error message
+        if (currentUser.getFine() > 0) {
+            model.addAttribute("errorMessage", "You have an outstanding fine of RM " + currentUser.getFine() + ". Please settle it at the library before borrowing.");
+        } else if (hasOverdueBook) {
+            model.addAttribute("errorMessage", "You have an overdue book in your library! Please return it before borrowing new books.");
+        }
+
+        // 3. Load the books
+        List<Book> filteredBooks;
         if (search != null && !search.trim().isEmpty()) {
             filteredBooks = bookRepository.findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCase(search, search);
         } else {
-
             filteredBooks = bookRepository.findAll();
         }
 
         model.addAttribute("books", filteredBooks);
-
-        User currentUser = userRepository.findByUsername(principal.getName()); //func nak tarik username ke dashbaord
         model.addAttribute("currentUser", currentUser);
 
         return "dashboard";
@@ -146,16 +163,22 @@ public class DashboardController {
             LocalDateTime now = LocalDateTime.now();
             loan.setReturn_date(now);
 
+            // Calculate fine safely without double charging
             if (now.isAfter(loan.getDue_date())) {
-                long daysLate = java.time.Duration.between(loan.getDue_date(), now).toDays();
-                if (daysLate < 1) daysLate = 1; // any lateness within the same day still counts as 1 day late
+                long daysLate = java.time.temporal.ChronoUnit.DAYS.between(loan.getDue_date().toLocalDate(), now.toLocalDate());
+                if (daysLate < 1) daysLate = 1;
 
-                double fine = daysLate * 2.0;
-                loan.setFine_amount(fine);
+                double finalTotalFine = daysLate * 2.0;
 
-                User loanOwner = loan.getUser();
-                loanOwner.setFine(loanOwner.getFine() + fine);
-                userRepository.save(loanOwner);
+                // Only add to the user's total fine if the background service missed it today
+                if (finalTotalFine > loan.getFine_amount()) {
+                    double fineDifference = finalTotalFine - loan.getFine_amount();
+                    loan.setFine_amount(finalTotalFine);
+
+                    User loanOwner = loan.getUser();
+                    loanOwner.setFine(loanOwner.getFine() + fineDifference);
+                    userRepository.save(loanOwner);
+                }
             }
 
             loanRepository.save(loan);
@@ -176,14 +199,7 @@ public class DashboardController {
 
                 if (sum != null && count != null && count > 0) {
                     double initialRating = book.getAvg_rating();
-
-                    double weightedAvg;
-                    if (initialRating > 0) {
-                        weightedAvg = (sum + initialRating) / (count + 1);
-                    } else {
-                        weightedAvg = sum / count;
-                    }
-
+                    double weightedAvg = (initialRating > 0) ? (sum + initialRating) / (count + 1) : sum / count;
                     book.setAvg_rating(weightedAvg);
                 }
             }
@@ -212,11 +228,27 @@ public class DashboardController {
         User currentUser = userRepository.findByUsername(principal.getName());
         Book book = bookRepository.findById(bookId).orElse(null);
 
-        if (currentUser.getFine() > 0) {
+        // 1. Check for overdue books
+        boolean hasOverdueBook = false;
+        List<Loan> activeLoans = loanRepository.findActiveLoansByUserId(currentUser.getMatric_id());
+
+        for (Loan loan : activeLoans) {
+            if (LocalDateTime.now().isAfter(loan.getDue_date())) {
+                hasOverdueBook = true;
+                break;
+            }
+        }
+
+        // 2. Block the transaction if they have fines OR overdue books
+        if (hasOverdueBook) {
+            redirectAttributes.addFlashAttribute("errorMessage", "You have an overdue book in your library! Please return it before borrowing new books.");
+            return "redirect:/dashboard";
+        } else if (currentUser.getFine() > 0) {
             redirectAttributes.addFlashAttribute("errorMessage", "You have an outstanding fine of RM " + currentUser.getFine() + ". Please settle it at the library before borrowing.");
             return "redirect:/dashboard";
         }
 
+        // 3. If everything is clear, issue the loan
         if (book != null && "Available".equals(book.getStatus())) {
             Loan loan = new Loan();
             loan.setUser(currentUser);
