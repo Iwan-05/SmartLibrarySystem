@@ -35,7 +35,9 @@ public class AdminController {
 
 
     @GetMapping("/loans")
-    public String showLoans(Model model) {
+    public String showLoans(Model model, Principal principal) {
+        User currentUser = userRepository.findByUsername(principal.getName());
+        model.addAttribute("currentUser", currentUser);
         model.addAttribute("activeSection", "loans");
 
         // Change this line to use the new ordered method
