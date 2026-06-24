@@ -135,13 +135,15 @@
                     <div class="form-group">
                         <label for="loanBook">Book Title</label>
                         <input type="text" id="loanBook" name="bookTitle" class="form-control" required
-                               placeholder="Type the exact book title..." />
+                               placeholder="Type the exact book title..."
+                               th:value="${loanForm.book != null ? loanForm.book.title : ''}" />
                     </div>
 
                     <div class="form-group">
                         <label for="loanUser">Matric ID</label>
                         <input type="text" id="loanUser" name="memberId" class="form-control" required
-                               placeholder="Type the member ID..." />
+                               placeholder="Type the member ID..."
+                               th:value="${loanForm.user != null ? loanForm.user.matric_id : ''}" />
                     </div>
 
                     <div class="form-group">
